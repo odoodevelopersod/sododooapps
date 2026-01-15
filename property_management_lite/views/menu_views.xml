@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_property_management_root" 
+              name="Property Management" 
+              sequence="1"
+              web_icon="property_management_lite,static/description/icon.png"/>
+
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_property_dashboard" 
+              name="Dashboard" 
+              parent="menu_property_management_root" 
+              action="action_property_dashboard" 
+              sequence="5"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+
+    <!-- Property Structure Menu -->
+    <menuitem id="menu_property_structure" 
+              name="Property Structure" 
+              parent="menu_property_management_root" 
+              sequence="10"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+
+    <menuitem id="menu_property_properties" 
+              name="Properties" 
+              parent="menu_property_structure" 
+              action="action_property_property" 
+              sequence="10"/>
+
+    <menuitem id="menu_property_flats" 
+              name="Flats" 
+              parent="menu_property_structure" 
+              action="action_property_flat" 
+              sequence="20"/>
+
+    <menuitem id="menu_property_rooms" 
+              name="Rooms" 
+              parent="menu_property_structure" 
+              action="action_property_room" 
+              sequence="30"/>
+
+    <!-- Tenant Management Menu -->
+    <menuitem id="menu_tenant_management" 
+              name="Tenant Management" 
+              parent="menu_property_management_root" 
+              sequence="20"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin,group_property_tenant_manager"/>
+
+    <menuitem id="menu_property_tenants" 
+              name="Tenants" 
+              parent="menu_tenant_management" 
+              action="action_property_tenant" 
+              sequence="10"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin,group_property_tenant_manager"/>
+
+    <menuitem id="menu_property_agents" 
+              name="Agents" 
+              parent="menu_tenant_management" 
+              action="action_property_agents" 
+              sequence="15"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+
+    <menuitem id="menu_property_agreements" 
+              name="Agreements" 
+              parent="menu_tenant_management" 
+              action="action_property_agreement" 
+              sequence="20"/>
+
+    <menuitem id="menu_property_occupants" 
+              name="Room Occupants" 
+              parent="menu_tenant_management" 
+              action="action_property_occupant" 
+              sequence="25"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin,group_property_tenant_manager"/>
+              
+    <menuitem id="menu_property_other_charges" 
+              name="Other Charges" 
+              parent="menu_tenant_management" 
+              action="action_property_other_charges" 
+              sequence="30"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+
+    <!-- Bills Menu -->
+    <menuitem id="menu_expenses_bills" 
+              name="Expenses/Bills" 
+              parent="menu_property_management_root" 
+              sequence="30"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+    <menuitem id="menu_property_expenses" 
+              name="Bills" 
+              parent="menu_expenses_bills" 
+              action="account.action_move_in_invoice" 
+              sequence="20"/>
+    <menuitem id="menu_property_payments" 
+              name="Payments" 
+              parent="menu_expenses_bills" 
+              action="account.action_account_payments_payable" 
+              sequence="30"/>
+
+    <!-- Daily Operations Menu -->
+
+    <menuitem id="menu_property_collections" 
+              name="Daily Collections" 
+              parent="menu_property_management_root" 
+              action="action_property_collection" 
+              sequence="10"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+
+    <!-- Invoicing Menu -->
+    <menuitem id="menu_property_invoicing" 
+              name="Invoicing" 
+              parent="menu_property_management_root" 
+              sequence="60"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+    
+    <menuitem id="menu_property_invoice" 
+              name="Invoices" 
+              parent="menu_property_invoicing" 
+              action="account.action_move_out_invoice" 
+              sequence="10"/>
+    
+    <menuitem id="menu_property_payment" 
+              name="Payments" 
+              parent="menu_property_invoicing" 
+              action="account.action_account_payments" 
+              sequence="20"/>
+
+    <!-- Reports Menu -->
+    <menuitem id="menu_property_reports" 
+              name="Reports" 
+              parent="menu_property_management_root" 
+              sequence="90"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_property_configuration" 
+              name="Configuration" 
+              parent="menu_property_management_root" 
+              sequence="95"
+              groups="group_property_user,group_property_officer,group_property_manager,group_property_admin"/>
+              
+    <!-- <menuitem id="menu_property_import_data" 
+              name="Import Data" 
+              parent="menu_property_configuration" 
+              action="action_property_data_import_wizard" 
+              sequence="10"/> -->
+              
+    <menuitem id="menu_property_room_types" 
+              name="Room Types" 
+              parent="menu_property_configuration" 
+              action="action_property_room_type" 
+              sequence="20"/>
+              
+    <!-- Test menu item -->
+    <!-- <menuitem id="menu_property_test" 
+              name="Test Properties" 
+              parent="menu_property_configuration" 
+              action="action_property_property" 
+              sequence="20"/> -->
+
+    <menuitem id="menu_property_collection_reports" 
+              name="Collection Reports" 
+              parent="menu_property_reports" 
+              action="action_property_collection" 
+              sequence="10"/>
+
+    <menuitem id="menu_property_outstanding_dues" 
+              name="Outstanding Dues Summary" 
+              parent="menu_property_reports" 
+              action="action_property_outstanding_dues" 
+              sequence="15"/>
+
+    <menuitem id="menu_property_statement" 
+              name="Statement of Account" 
+              parent="menu_property_reports" 
+              action="action_property_statement" 
+              sequence="18"/>
+
+    <menuitem id="menu_property_statement_analysis" 
+              name="Statement Analysis" 
+              parent="menu_property_reports" 
+              action="action_property_statement_analysis" 
+              sequence="19"/>
+
+    <menuitem id="menu_property_rooms_available" 
+              name="Available Rooms" 
+              parent="menu_property_reports" 
+              action="action_property_room_available" 
+              sequence="20"/>
+</odoo>

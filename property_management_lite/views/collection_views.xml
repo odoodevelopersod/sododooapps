@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Collection Tree View -->
+    <record id="view_property_collection_tree" model="ir.ui.view">
+        <field name="name">property.collection.tree</field>
+        <field name="model">property.collection</field>
+        <field name="arch" type="xml">
+            <list string="Collections" decoration-success="status=='verified'" decoration-info="status=='collected'" decoration-warning="status=='draft'" create="true">
+                <field name="date" required="1"/>
+                <field name="tenant_id" required="1"
+                       options="{'no_create': True, 'no_edit': True, 'limit': 1000}"/>
+                <field name="room_id" domain="[('current_tenant_id', '=', tenant_id)]" 
+                       options="{'no_create': True}" readonly="1"/>
+                <field name="property_id" readonly="1"/>
+                <field name="collection_type" required="1"/>
+                <field name="period_from" optional="show" readonly="0" 
+                       invisible="collection_type not in ['rent', 'parking_charges']"/>
+                <field name="period_to" optional="show" readonly="0" 
+                       invisible="collection_type not in ['rent', 'parking_charges']"/>
+                <field name="amount_collected" widget="monetary" required="1"/>
+                <field name="other_charge_id" optional="hide" 
+                       invisible="collection_type != 'other_charges'" 
+                       domain="[('active', '=', True)]" options="{'no_create': True}"/>
+                <field name="payment_method" required="1"/>
+                <field name="reference_number" optional="hide"/>
+                <field name="status" readonly="1"/>
+                <field name="collected_by" readonly="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="agreement_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Collection Search View -->
+    <record id="view_property_collection_search" model="ir.ui.view">
+        <field name="name">property.collection.search</field>
+        <field name="model">property.collection</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="tenant_id"/>
+                <field name="room_id"/>
+                <field name="property_id"/>
+                <field name="collection_type"/>
+                <field name="payment_method"/>
+                <field name="status"/>
+                <field name="collected_by"/>
+                <field name="date"/>
+                
+                <!-- Date Range Filters -->
+                <filter string="Today" name="today" 
+                        domain="[('date', '=', context_today())]"/>
+                <filter string="Yesterday" name="yesterday" 
+                        domain="[('date', '=', '2025-08-03')]"/>
+                <filter string="This Week" name="this_week" 
+                        domain="[('date', '&gt;=', '2025-07-28')]"/>
+                <filter string="Last Week" name="last_week" 
+                        domain="[('date', '&gt;=', '2025-07-21'), ('date', '&lt;=', '2025-07-27')]"/>
+                <filter string="This Month" name="this_month" 
+                        domain="[('date', '&gt;=', '2025-08-01')]"/>
+                <filter string="Last Month" name="last_month" 
+                        domain="[('date', '&gt;=', '2025-07-01'), ('date', '&lt;=', '2025-07-31')]"/>
+                
+                <separator/>
+                
+                <!-- Quick Date Filters -->
+                <filter string="Last 7 Days" name="last_7_days" 
+                        domain="[('date', '&gt;=', '2025-07-28')]"/>
+                <filter string="Last 15 Days" name="last_15_days" 
+                        domain="[('date', '&gt;=', '2025-07-20')]"/>
+                <filter string="Last 30 Days" name="last_30_days" 
+                        domain="[('date', '&gt;=', '2025-07-05')]"/>
+                <filter string="Last 90 Days" name="last_90_days" 
+                        domain="[('date', '&gt;=', '2025-05-05')]"/>
+                
+                <separator/>
+                
+                <!-- Status Filters -->
+                <filter string="Draft" name="draft" domain="[('status', '=', 'draft')]"/>
+                <filter string="Collected" name="collected" domain="[('status', '=', 'collected')]"/>
+                <filter string="Verified" name="verified" domain="[('status', '=', 'verified')]"/>
+                <filter string="Deposited" name="deposited" domain="[('status', '=', 'deposited')]"/>
+                
+                <separator/>
+                
+                <!-- Collection Type Filters -->
+                <filter string="Rent" name="rent" domain="[('collection_type', '=', 'rent')]"/>
+                <filter string="Deposit" name="deposit" domain="[('collection_type', '=', 'deposit')]"/>
+                <filter string="Utility" name="utility" domain="[('collection_type', '=', 'utility')]"/>
+                <filter string="Maintenance" name="maintenance" domain="[('collection_type', '=', 'maintenance')]"/>
+                
+                <separator/>
+                
+                <!-- Payment Method Filters -->
+                <filter string="Cash" name="cash" domain="[('payment_method', '=', 'cash')]"/>
+                <filter string="Bank Transfer" name="bank_transfer" domain="[('payment_method', '=', 'bank_transfer')]"/>
+                <filter string="Cheque" name="cheque" domain="[('payment_method', '=', 'cheque')]"/>
+                <filter string="Card" name="card" domain="[('payment_method', '=', 'card')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Date" name="group_date" context="{'group_by': 'date'}"/>
+                    <filter string="Tenant" name="group_tenant" context="{'group_by': 'tenant_id'}"/>
+                    <filter string="Room" name="group_room" context="{'group_by': 'room_id'}"/>
+                    <filter string="Property" name="group_property" context="{'group_by': 'property_id'}"/>
+                    <filter string="Collection Type" name="group_type" context="{'group_by': 'collection_type'}"/>
+                    <filter string="Payment Method" name="group_payment" context="{'group_by': 'payment_method'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Collected By" name="group_collector" context="{'group_by': 'collected_by'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Collection Form View -->
+    <record id="view_property_collection_form" model="ir.ui.view">
+        <field name="name">property.collection.form</field>
+        <field name="model">property.collection</field>
+        <field name="arch" type="xml">
+            <form string="Collection">
+                <header>
+                    <button name="action_collect" string="Mark as Collected" type="object" class="btn-primary" invisible="status != 'draft'"/>
+                    <button name="action_verify" string="Verify" type="object" invisible="status != 'collected'"/>
+                    <button name="action_deposit" string="Mark as Deposited" type="object" invisible="status != 'verified'"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="status in ['cancelled', 'deposited']"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,collected,verified,deposited"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group name="collection_info">
+                            <field name="date"/>
+                            <field name="collection_type"/>
+                            <field name="amount_collected"/>
+                            <field name="payment_method"/>
+                            <field name="reference_number"/>
+                        </group>
+                        <group name="tenant_info">
+                            <field name="tenant_id"
+                                   options="{'no_create': True, 'no_edit': True, 'limit': 1000}"/>
+                            <field name="room_id" domain="[('current_tenant_id', '=', tenant_id)]" 
+                                   options="{'no_create': True}"/>
+                            <field name="property_id" readonly="1"/>
+                            <field name="agreement_id" domain="[('tenant_id', '=', tenant_id), ('room_id', '=', room_id)]" 
+                                   options="{'no_create': True}"/>
+                            <field name="other_charge_id" invisible="collection_type != 'other_charges'" 
+                                   domain="[('active', '=', True)]" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    
+                    <group name="period_info" string="Period Details" invisible="collection_type not in ['rent', 'utility', 'parking_charges']">
+                        <group>
+                            <field name="period_from" string="Period From" help="Start date of period (auto-calculated as 1st of month)"/>
+                            <field name="period_to" string="Period To" help="End date of period (auto-calculated as last day of month)"/>
+                        </group>
+                        <group>
+                            <field name="due_date" string="Due Date" help="When the payment was due (auto-calculated as last day of previous month)"/>
+                            <field name="days_late" readonly="1" string="Days Late"/>
+                            <field name="late_fee" invisible="days_late == 0" string="Late Fee"/>
+                        </group>
+                    </group>
+                    
+                    <group name="collection_details">
+                        <group>
+                            <field name="collected_by"/>
+                            <field name="verified_by" readonly="1"/>
+                            <field name="verification_date" readonly="1"/>
+                        </group>
+                        <group name="bank_info" invisible="payment_method != 'bank_transfer'">
+                            <field name="bank_id"/>
+                            <field name="bank_account"/>
+                        </group>
+                    </group>
+                    
+                    <group name="receipt_info">
+                        <field name="receipt_number"/>
+                        <field name="receipt_image" widget="image"/>
+                    </group>
+                    
+                    <field name="notes" placeholder="Additional notes..."/>
+                    
+                    <group name="accounting_integration" string="Accounting Integration" invisible="not payment_id">
+                        <field name="payment_id" readonly="1"/>
+                        <field name="payment_reference" readonly="1"/>
+                        <field name="matched_invoice_ids" readonly="1" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Collection Action -->
+    <record id="action_property_collection" model="ir.actions.act_window">
+        <field name="name">Collections</field>
+        <field name="res_model">property.collection</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Record your first collection!
+            </p>
+            <p>
+                Track daily rent collections, deposits, and other payments from tenants.
+            </p>
+        </field>
+    </record>
+
+    <!-- Today's Collections -->
+    <record id="action_property_collection_today" model="ir.actions.act_window">
+        <field name="name">Today's Collections</field>
+        <field name="res_model">property.collection</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('date', '=', context_today())]</field>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+</odoo>

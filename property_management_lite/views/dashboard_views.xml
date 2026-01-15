@@ -1,0 +1,464 @@
+<?x    <!-- Dashboard Action -->
+    <record id="action_property_dashboard" model="ir.actions.act_window">
+        <field name="name">Property Management Dashboard</field>
+        <field name="res_model">property.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'default_display_name': 'Property Management Dashboard'}</field>
+        <field name="res_id">1</field>
+    </record>on="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Dashboard Action -->
+    <record id="action_property_dashboard" model="ir.actions.act_window">
+        <field name="name">Property Dashboard</field>
+        <field name="res_model">property.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Dashboard Form View -->
+    <record id="view_property_dashboard_form" model="ir.ui.view">
+        <field name="name">property.dashboard.form</field>
+        <field name="model">property.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Property Management Dashboard" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="container-fluid">
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h1>Property Management Dashboard</h1>
+                            </div>
+                        </div>
+
+                        <!-- Overall Statistics -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">Overall Statistics</h3>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-info"><field name="total_properties" readonly="1"/></h2>
+                                        <p>Total Properties</p>
+                                        <button name="action_open_properties" type="object" class="btn btn-sm btn-outline-primary">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-info"><field name="total_rooms" readonly="1"/></h2>
+                                        <p>Total Rooms</p>
+                                        <button name="action_open_rooms" type="object" class="btn btn-sm btn-outline-primary">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-success"><field name="occupied_rooms" readonly="1"/></h2>
+                                        <p>Occupied Rooms</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-warning"><field name="vacant_rooms" readonly="1"/></h2>
+                                        <p>Vacant Rooms</p>
+                                        <button name="action_open_vacant_rooms" type="object" class="btn btn-sm btn-outline-primary">View Vacant</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Occupancy and Tenants -->
+                        <div class="row mb-4">
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3>Occupancy Rate</h3>
+                                        <h2 class="text-primary"><field name="occupancy_rate" widget="percentage" readonly="1"/></h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3>Active Tenants</h3>
+                                        <h2 class="text-success"><field name="total_tenants" readonly="1"/></h2>
+                                        <button name="action_open_tenants" type="object" class="btn btn-sm btn-outline-primary">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3>Total Agents</h3>
+                                        <h2 class="text-info"><field name="total_agents" readonly="1"/></h2>
+                                        <button name="action_open_agents" type="object" class="btn btn-sm btn-outline-primary">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Agent Statistics -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">Agent Performance</h3>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-success"><field name="active_agents" readonly="1"/></h4>
+                                        <p>Active Agents</p>
+                                        <small class="text-muted">Agents with assigned tenants</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-info"><field name="agents_with_tenants" readonly="1"/></h4>
+                                        <p>Agents with Tenants</p>
+                                        <button name="action_open_agent_agreements" type="object" class="btn btn-sm btn-outline-primary">View Assignments</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-warning"><field name="total_agents" readonly="1"/></h4>
+                                        <p>Total Registered</p>
+                                        <small class="text-muted">All agent contacts</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Today's Stats -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">Today's Statistics</h3>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="today_collections" widget="monetary" readonly="1"/></h4>
+                                        <p>Today's Collections</p>
+                                        <small class="text-muted"><field name="today_collections_count" readonly="1"/> transactions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="today_expenses" widget="monetary" readonly="1"/></h4>
+                                        <p>Today's Expenses</p>
+                                        <small class="text-muted"><field name="today_expenses_count" readonly="1"/> transactions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-success"><field name="today_profit" widget="monetary" readonly="1"/></h4>
+                                        <p>Today's Profit</p>
+                                        <small class="text-muted">Collections - Expenses</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="today_vacant_rooms" readonly="1"/></h4>
+                                        <p>Currently Vacant</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weekly Stats -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">This Week</h3>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="week_collections" widget="monetary" readonly="1"/></h4>
+                                        <p>Week Collections</p>
+                                        <small class="text-muted"><field name="week_collections_count" readonly="1"/> transactions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="week_expenses" widget="monetary" readonly="1"/></h4>
+                                        <p>Week Expenses</p>
+                                        <small class="text-muted"><field name="week_expenses_count" readonly="1"/> transactions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-success"><field name="week_profit" widget="monetary" readonly="1"/></h4>
+                                        <p>Week Profit</p>
+                                        <small class="text-muted">Collections - Expenses</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- New Tenants This Week -->
+                        <div class="row mb-4">
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="week_new_tenants" readonly="1"/></h4>
+                                        <p>New Tenants This Week</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Stats -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">This Month</h3>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="month_collections" widget="monetary" readonly="1"/></h4>
+                                        <p>Month Collections</p>
+                                        <small class="text-muted"><field name="month_collections_count" readonly="1"/> transactions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="month_new_tenants" readonly="1"/></h4>
+                                        <p>New Tenants</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4><field name="month_expenses" widget="monetary" readonly="1"/></h4>
+                                        <p>Month Expenses</p>
+                                        <small class="text-muted"><field name="month_expenses_count" readonly="1"/> transactions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-success"><field name="month_profit" widget="monetary" readonly="1"/></h4>
+                                        <p>Net Income</p>
+                                        <small class="text-muted">Collections - Expenses</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Agent Performance Details -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">Agent Performance Details</h3>
+                            </div>
+                            <div class="col-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Top Performing Agents</h5>
+                                        <small class="text-muted">Ranked by number of tenants managed</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <pre style="white-space: pre-wrap; font-family: inherit;"><field name="top_agents_list" readonly="1"/></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Agent Performance Summary</h5>
+                                        <small class="text-muted">Key performance indicators</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <pre style="white-space: pre-wrap; font-family: inherit;"><field name="agent_performance_summary" readonly="1"/></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activities -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h3 class="text-primary">Outstanding Dues &amp; Collections</h3>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-warning"><field name="total_outstanding_amount" widget="monetary" readonly="1"/></h2>
+                                        <p>Total Outstanding</p>
+                                        <small><field name="total_outstanding_count" readonly="1"/> Tenants</small>
+                                        <br/>
+                                        <button name="action_open_outstanding_dues" type="object" class="btn btn-sm btn-outline-warning">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-danger"><field name="overdue_amount" widget="monetary" readonly="1"/></h2>
+                                        <p>Overdue Amount</p>
+                                        <small><field name="overdue_tenants_count" readonly="1"/> Tenants</small>
+                                        <br/>
+                                        <button name="action_open_overdue_tenants" type="object" class="btn btn-sm btn-outline-danger">View Overdue</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-dark"><field name="critical_overdue_amount" widget="monetary" readonly="1"/></h2>
+                                        <p>Critical Overdue (90+ Days)</p>
+                                        <small><field name="critical_overdue_count" readonly="1"/> Tenants</small>
+                                        <br/>
+                                        <button name="action_open_critical_overdue" type="object" class="btn btn-sm btn-outline-dark">View Critical</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-success"><field name="collection_efficiency" widget="percentage" readonly="1"/></h2>
+                                        <p>Collection Efficiency</p>
+                                        <small>This Month</small>
+                                        <br/>
+                                        <button name="action_open_statement_analysis" type="object" class="btn btn-sm btn-outline-success">View Analysis</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Statement Analysis -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">Monthly Statement Analysis</h3>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-info"><field name="month_statement_entries" readonly="1"/></h2>
+                                        <p>Statement Entries</p>
+                                        <small>This Month</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-warning"><field name="month_total_debits" widget="monetary" readonly="1"/></h2>
+                                        <p>Total Charges</p>
+                                        <small>This Month</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-success"><field name="month_total_credits" widget="monetary" readonly="1"/></h2>
+                                        <p>Total Payments</p>
+                                        <small>This Month</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-dark"><field name="month_net_balance" widget="monetary" readonly="1"/></h2>
+                                        <p>Net Balance</p>
+                                        <small>This Month</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tenant Balance Summary -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h3 class="text-primary">Tenant Balance Summary</h3>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-success"><field name="tenants_with_negative_balance" readonly="1"/></h2>
+                                        <p>Tenants with Credit Balance</p>
+                                        <small>Advance Payments</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-warning"><field name="tenants_with_positive_balance" readonly="1"/></h2>
+                                        <p>Tenants with Debit Balance</p>
+                                        <small>Pending Payments</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Top Debtors</h5>
+                                        <button name="action_open_tenant_balances" type="object" class="btn btn-sm btn-outline-primary">View All Balances</button>
+                                    </div>
+                                    <div class="card-body">
+                                        <pre style="white-space: pre-wrap; font-size: 12px;"><field name="top_debtors_list" readonly="1"/></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activities -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h3 class="text-primary">Recent Activities</h3>
+                            </div>
+                            <div class="col-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Recent Collections</h5>
+                                        <button name="action_open_collections" type="object" class="btn btn-sm btn-outline-primary">View All</button>
+                                    </div>
+                                    <div class="card-body">
+                                        <pre style="white-space: pre-wrap;"><field name="recent_collections" readonly="1"/></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Recent Tenants</h5>
+                                        <button name="action_open_tenants" type="object" class="btn btn-sm btn-outline-primary">View All</button>
+                                    </div>
+                                    <div class="card-body">
+                                        <pre style="white-space: pre-wrap;"><field name="recent_tenants" readonly="1"/></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

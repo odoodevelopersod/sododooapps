@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Room Tree View -->
+    <record id="view_property_room_tree" model="ir.ui.view">
+        <field name="name">property.room.tree</field>
+        <field name="model">property.room</field>
+        <field name="arch" type="xml">
+            <list string="Rooms" decoration-success="status=='occupied'" decoration-info="status=='booked'" decoration-warning="status=='maintenance'">
+                <field name="name"/>
+                <field name="property_id"/>
+                <field name="flat_id"/>
+                <field name="room_type_id"/>
+                <field name="rent_amount" widget="monetary"/>
+                <field name="parking_charges" widget="monetary" optional="hide"/>
+                <field name="current_tenant_id"/>
+                <field name="status"/>
+                <field name="has_parking"/>
+                <field name="parking_number"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Room Form View -->
+    <record id="view_property_room_form" model="ir.ui.view">
+        <field name="name">property.room.form</field>
+        <field name="model">property.room</field>
+        <field name="arch" type="xml">
+            <form string="Room">
+                <header>
+                    <button name="action_book_room" string="Book" type="object" class="btn-primary" invisible="status != 'vacant'"/>
+                    <button name="action_occupy_room" string="Occupy" type="object" invisible="status != 'booked'"/>
+                    <button name="action_vacate_room" string="Vacate" type="object" invisible="status != 'occupied'" confirm="Are you sure you want to vacate this room?"/>
+                    <button name="action_maintenance" string="Maintenance" type="object" invisible="status == 'maintenance'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="vacant,booked,occupied"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_collections" type="object" class="oe_stat_button" icon="fa-money">
+                            <field name="total_collected" widget="statinfo" string="Total Collected"/>
+                        </button>
+                        <button name="action_create_agreement" type="object" class="oe_stat_button" icon="fa-file-text">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Create</span>
+                                <span class="o_stat_text">Agreement</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <field name="room_number" placeholder="Room Number"/>
+                        </h2>
+                    </div>
+                    
+                    <group>
+                        <group name="basic_info">
+                            <field name="property_id"/>
+                            <field name="flat_id" domain="[('property_id', '=', property_id)]"/>
+                            <field name="room_type_id"/>
+                            <field name="area"/>
+                        </group>
+                        <group name="financial">
+                            <field name="rent_amount"/>
+                            <field name="deposit_amount"/>
+                            <field name="parking_charges" invisible="not has_parking"/>
+                            <field name="parking_deposit" invisible="not has_parking"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <group name="other_charges" string="Other Charges">
+                        <group>
+                            <field name="cleaning_charges"/>
+                            <field name="extra_person_charges"/>
+                        </group>
+                        <group>
+                            <field name="maintenance_charges"/>
+                            <field name="utility_charges"/>
+                        </group>
+                    </group>
+                    
+                    <group name="additional_charges" string="Additional Charges from Master List">
+                        <field name="other_charge_ids" nolabel="1" widget="many2many_tags"/>
+                    </group>
+                    
+                    <group name="current_tenant" string="Current Tenant" invisible="status != 'occupied'">
+                        <group>
+                            <field name="current_tenant_id"/>
+                            <field name="current_agreement_id"/>
+                            <field name="occupants_count" string="Room Occupants"/>
+                        </group>
+                        <group>
+                            <field name="security_deposit" widget="monetary"/>
+                            <field name="outstanding_amount" widget="monetary"/>
+                        </group>
+                    </group>
+                    
+                    <group name="facilities" string="Facilities">
+                        <group>
+                            <field name="has_ac"/>
+                            <field name="has_heater"/>
+                            <field name="has_wardrobe"/>
+                            <field name="has_desk"/>
+                            <field name="has_wifi"/>
+                            <field name="has_private_bathroom"/>
+                            <field name="has_balcony_access"/>
+                        </group>
+                        <group>
+                            <field name="has_parking"/>
+                            <field name="parking_number" invisible="not has_parking"/>
+                            <field name="has_gas"/>
+                            <field name="electricity_included"/>
+                            <field name="water_included"/>
+                            <field name="internet_included"/>
+                        </group>
+                    </group>
+                    
+                    <group name="additional_info">
+                        <field name="inclusions" placeholder="List other inclusions..."/>
+                        <field name="notes" placeholder="Additional notes about the room..."/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Occupants" name="occupants" invisible="status != 'occupied'">
+                            <field name="current_occupants_ids">
+                                <list editable="bottom" create="false" delete="false">
+                                    <field name="is_primary" widget="boolean_toggle"/>
+                                    <field name="name"/>
+                                    <field name="occupant_type"/>
+                                    <field name="mobile"/>
+                                    <field name="email" optional="hide"/>
+                                    <field name="move_in_date"/>
+                                    <field name="move_out_date" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Images" name="images">
+                            <field name="image_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="create_date"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Room Action -->
+    <record id="action_property_room" model="ir.actions.act_window">
+        <field name="name">Rooms</field>
+        <field name="res_model">property.room</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Set up your first room!
+            </p>
+            <p>
+                Define rooms within your flats with detailed information about facilities and rental terms.
+            </p>
+        </field>
+    </record>
+
+    <!-- Available Rooms -->
+    <record id="action_property_room_available" model="ir.actions.act_window">
+        <field name="name">Available Rooms</field>
+        <field name="res_model">property.room</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('status', 'in', ['vacant', 'booked'])]</field>
+    </record>
+</odoo>

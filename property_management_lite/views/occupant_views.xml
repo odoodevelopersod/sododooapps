@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Occupant List View -->
+    <record id="view_property_occupant_list" model="ir.ui.view">
+        <field name="name">property.occupant.list</field>
+        <field name="model">property.occupant</field>
+        <field name="arch" type="xml">
+            <list string="Room Occupants" decoration-primary="is_primary == True">
+                <field name="is_primary" widget="boolean_toggle" optional="show"/>
+                <field name="name"/>
+                <field name="occupant_type"/>
+                <field name="mobile"/>
+                <field name="email" optional="hide"/>
+                <field name="id_passport" optional="show"/>
+                <field name="nationality" optional="hide"/>
+                <field name="room_id"/>
+                <field name="property_id" optional="hide"/>
+                <field name="move_in_date" optional="show"/>
+                <field name="move_out_date" optional="hide"/>
+                <field name="active" widget="boolean_toggle" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Occupant Form View -->
+    <record id="view_property_occupant_form" model="ir.ui.view">
+        <field name="name">property.occupant.form</field>
+        <field name="model">property.occupant</field>
+        <field name="arch" type="xml">
+            <form string="Room Occupant">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_documents" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="documents_count" widget="statinfo" string="Documents"/>
+                        </button>
+                    </div>
+                    
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Full Name" required="1"/>
+                        </h1>
+                        <h2>
+                            <field name="is_primary" widget="boolean_toggle"/>
+                            <label for="is_primary" string="Primary Tenant"/>
+                        </h2>
+                    </div>
+                    
+                    <group>
+                        <group name="basic_info">
+                            <field name="agreement_id" required="1"/>
+                            <field name="occupant_type" required="1"/>
+                            <field name="room_id" readonly="1"/>
+                            <field name="property_id" readonly="1"/>
+                        </group>
+                        <group name="dates">
+                            <field name="move_in_date"/>
+                            <field name="move_out_date"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Contact Information" name="contact">
+                            <group>
+                                <group>
+                                    <field name="mobile"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                </group>
+                                <group>
+                                    <field name="nationality"/>
+                                    <field name="date_of_birth"/>
+                                    <field name="gender"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Identification" name="identification">
+                            <group>
+                                <group>
+                                    <field name="id_type"/>
+                                    <field name="id_passport"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Emergency Contact" name="emergency">
+                            <group>
+                                <group>
+                                    <field name="emergency_contact_name"/>
+                                    <field name="emergency_contact_phone"/>
+                                    <field name="emergency_contact_relation"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Professional Info" name="professional">
+                            <group>
+                                <group>
+                                    <field name="company_name"/>
+                                    <field name="job_title"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Documents" name="documents">
+                            <field name="document_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="mimetype"/>
+                                    <field name="file_size" widget="file_size"/>
+                                    <field name="create_date"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Additional notes about this occupant..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Occupant Search View -->
+    <record id="view_property_occupant_search" model="ir.ui.view">
+        <field name="name">property.occupant.search</field>
+        <field name="model">property.occupant</field>
+        <field name="arch" type="xml">
+            <search string="Search Occupants">
+                <field name="name"/>
+                <field name="mobile"/>
+                <field name="email"/>
+                <field name="id_passport"/>
+                <field name="room_id"/>
+                <field name="property_id"/>
+                <field name="agreement_id"/>
+                
+                <filter name="primary" string="Primary Tenants" domain="[('is_primary', '=', True)]"/>
+                <filter name="co_tenants" string="Co-Tenants" domain="[('occupant_type', '=', 'co_tenant')]"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_occupant_type" string="Occupant Type" context="{'group_by': 'occupant_type'}"/>
+                    <filter name="group_room" string="Room" context="{'group_by': 'room_id'}"/>
+                    <filter name="group_property" string="Property" context="{'group_by': 'property_id'}"/>
+                    <filter name="group_agreement" string="Agreement" context="{'group_by': 'agreement_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Occupant Kanban View -->
+    <record id="view_property_occupant_kanban" model="ir.ui.view">
+        <field name="name">property.occupant.kanban</field>
+        <field name="model">property.occupant</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="occupant_type"/>
+                <field name="is_primary"/>
+                <field name="mobile"/>
+                <field name="room_id"/>
+                <field name="image_medium"/>
+                
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <img t-att-src="kanban_image('property.occupant', 'image_medium', record.id.raw_value)" alt="Occupant"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <t t-if="record.is_primary.raw_value">★ </t>
+                                    <field name="name"/>
+                                </strong>
+                                <div class="o_kanban_record_subtitle">
+                                    <field name="occupant_type"/>
+                                </div>
+                                <div>
+                                    <i class="fa fa-phone"/> <field name="mobile"/>
+                                </div>
+                                <div>
+                                    <i class="fa fa-building"/> <field name="room_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Occupant Action -->
+    <record id="action_property_occupant" model="ir.actions.act_window">
+        <field name="name">Room Occupants</field>
+        <field name="res_model">property.occupant</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a room occupant!
+            </p>
+            <p>
+                Track all persons staying in your rooms - primary tenants, co-tenants, spouses, dependents, and guests.
+                This helps maintain complete occupancy records for compliance and management purposes.
+            </p>
+        </field>
+    </record>
+</odoo>

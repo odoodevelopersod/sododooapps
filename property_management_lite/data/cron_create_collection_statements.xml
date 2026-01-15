@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled Action: Create Missing Collection Statements -->
+    <record id="ir_cron_create_collection_statements" model="ir.cron">
+        <field name="name">Create Missing Collection Statement Entries</field>
+        <field name="model_id" ref="model_property_collection"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_create_missing_collection_statements()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

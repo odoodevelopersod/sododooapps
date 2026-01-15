@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Clean & Terminate Wizard Form -->
+    <record id="view_property_agreement_clean_wizard_form" model="ir.ui.view">
+        <field name="name">property.agreement.clean.wizard.form</field>
+        <field name="model">property.agreement.clean.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Clean &amp; Terminate Agreement">
+                <group>
+                    <field name="agreement_id" invisible="1"/>
+                    <field name="agreement_name" readonly="1"/>
+                </group>
+                
+                <group string="Warning" class="alert alert-warning">
+                    <div class="text-center">
+                        <p><strong>This action will permanently delete:</strong></p>
+                    </div>
+                </group>
+                
+                <group>
+                    <group>
+                        <field name="statement_count" readonly="1" string="Statement Entries"/>
+                        <field name="invoice_count" readonly="1" string="Invoices"/>
+                    </group>
+                    <group>
+                        <field name="collection_count" readonly="1" string="Collections"/>
+                        <field name="payment_count" readonly="1" string="Payments"/>
+                    </group>
+                </group>
+                
+                <group class="alert alert-danger">
+                    <div class="text-center">
+                        <p><strong>⚠️ This action cannot be undone!</strong></p>
+                        <p>The agreement will be terminated after cleanup.</p>
+                    </div>
+                </group>
+                
+                <footer>
+                    <button string="Clean &amp; Terminate" name="action_confirm_clean_terminate" type="object" class="btn-danger"/>
+                    <button string="Cancel" name="action_cancel" type="object" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Other Charges List View -->
+    <record id="view_property_other_charges_list" model="ir.ui.view">
+        <field name="name">property.other.charges.list</field>
+        <field name="model">property.other.charges</field>
+        <field name="arch" type="xml">
+            <list string="Other Charges" editable="bottom">
+                <field name="name"/>
+                <field name="charge_type"/>
+                <field name="amount" widget="monetary"/>
+                <field name="frequency"/>
+                <field name="is_mandatory"/>
+                <field name="agreements_count" string="Applied"/>
+                <field name="active"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Other Charges Form View -->
+    <record id="view_property_other_charges_form" model="ir.ui.view">
+        <field name="name">property.other.charges.form</field>
+        <field name="model">property.other.charges</field>
+        <field name="arch" type="xml">
+            <form string="Other Charge">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_agreements" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="agreements_count" widget="statinfo" string="Agreements"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Charge Name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="charge_type"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="frequency"/>
+                            <field name="is_mandatory"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="currency_id"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Applicability">
+                        <field name="property_ids" widget="many2many_tags" placeholder="Leave empty for all properties"/>
+                        <field name="room_type_ids" widget="many2many_tags" placeholder="Leave empty for all room types"/>
+                    </group>
+                    
+                    <field name="description" placeholder="Description of the charge..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Other Charges Search View -->
+    <record id="view_property_other_charges_search" model="ir.ui.view">
+        <field name="name">property.other.charges.search</field>
+        <field name="model">property.other.charges</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="charge_type"/>
+                <field name="frequency"/>
+                <filter name="mandatory" string="Mandatory" domain="[('is_mandatory', '=', True)]"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_charge_type" string="Charge Type" context="{'group_by': 'charge_type'}"/>
+                    <filter name="group_frequency" string="Frequency" context="{'group_by': 'frequency'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Agreement Charges List View -->
+    <record id="view_property_agreement_charges_list" model="ir.ui.view">
+        <field name="name">property.agreement.charges.list</field>
+        <field name="model">property.agreement.charges</field>
+        <field name="arch" type="xml">
+            <list string="Agreement Charges" editable="bottom">
+                <field name="charge_name"/>
+                <field name="charge_type"/>
+                <field name="frequency"/>
+                <field name="default_amount" widget="monetary" string="Default"/>
+                <field name="custom_amount"/>
+                <field name="amount" widget="monetary"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="active"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="charge_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Agreement Charges Form View -->
+    <record id="view_property_agreement_charges_form" model="ir.ui.view">
+        <field name="name">property.agreement.charges.form</field>
+        <field name="model">property.agreement.charges</field>
+        <field name="arch" type="xml">
+            <form string="Agreement Charge">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="charge_id"/>
+                            <field name="charge_name" readonly="1"/>
+                            <field name="charge_type" readonly="1"/>
+                            <field name="frequency" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="default_amount" readonly="1" widget="monetary"/>
+                            <field name="custom_amount"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    
+                    <field name="notes" placeholder="Additional notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Other Charges Action -->
+    <record id="action_property_other_charges" model="ir.actions.act_window">
+        <field name="name">Other Charges</field>
+        <field name="res_model">property.other.charges</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first other charge!
+            </p>
+            <p>
+                Define various charges like utility bills, maintenance fees, amenity charges, etc.
+                These can be applied to agreements and collected from tenants.
+            </p>
+        </field>
+    </record>
+</odoo>

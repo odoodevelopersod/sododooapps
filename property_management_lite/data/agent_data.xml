@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Partner Categories for Agents -->
+        <record id="partner_category_property_agent" model="res.partner.category">
+            <field name="name">Property Agent</field>
+            <field name="color">3</field>
+        </record>
+        
+        <record id="partner_category_rental_agent" model="res.partner.category">
+            <field name="name">Rental Agent</field>
+            <field name="color">5</field>
+        </record>
+        
+        <record id="partner_category_sales_agent" model="res.partner.category">
+            <field name="name">Sales Agent</field>
+            <field name="color">7</field>
+        </record>
+        
+        <!-- Sample Agent Records -->
+        <record id="sample_agent_1" model="res.partner">
+            <field name="name">Ahmed Al-Mansouri</field>
+            <field name="is_company">False</field>
+            <field name="function">Property Agent</field>
+            <field name="phone">+971 50 123 4567</field>
+            <field name="email">ahmed.almansouri@shobharealestate.com</field>
+            <field name="category_id" eval="[(6, 0, [ref('partner_category_property_agent')])]"/>
+        </record>
+        
+        <record id="sample_agent_2" model="res.partner">
+            <field name="name">Sarah Johnson</field>
+            <field name="is_company">False</field>
+            <field name="function">Rental Agent</field>
+            <field name="phone">+971 55 987 6543</field>
+            <field name="email">sarah.johnson@shobharealestate.com</field>
+            <field name="category_id" eval="[(6, 0, [ref('partner_category_rental_agent')])]"/>
+        </record>
+        
+        <record id="sample_agent_3" model="res.partner">
+            <field name="name">Mohammed Rahman</field>
+            <field name="is_company">False</field>
+            <field name="function">Sales Agent</field>
+            <field name="phone">+971 52 456 7890</field>
+            <field name="email">mohammed.rahman@shobharealestate.com</field>
+            <field name="category_id" eval="[(6, 0, [ref('partner_category_sales_agent')])]"/>
+        </record>
+        
+    </data>
+</odoo>

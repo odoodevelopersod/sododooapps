@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Agreement List View -->
+    <record id="view_property_agreement_list" model="ir.ui.view">
+        <field name="name">property.agreement.list</field>
+        <field name="model">property.agreement</field>
+        <field name="arch" type="xml">
+            <list string="Rental Agreements">
+                <field name="name"/>
+                <field name="tenant_id"/>
+                <field name="room_id"/>
+                <field name="agent_id"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="rent_amount"/>
+                <field name="parking_charges" optional="hide"/>
+                <field name="state" decoration-success="state=='active'" decoration-info="state=='draft'" decoration-muted="state=='expired'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Agreement Form View -->
+    <record id="view_property_agreement_form" model="ir.ui.view">
+        <field name="name">property.agreement.form</field>
+        <field name="model">property.agreement</field>
+        <field name="arch" type="xml">
+            <form string="Rental Agreement">
+                <header>
+                    <button name="action_activate" type="object" string="Activate" 
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_terminate" type="object" string="Terminate" 
+                           invisible="state != 'active'" confirm="Are you sure you want to terminate this agreement?"/>
+                    <button name="action_clean_and_terminate" string="Clean &amp; Terminate" type="object" 
+                           invisible="state != 'active'" class="btn-danger"
+                           help="Delete all statements, invoices, and collections, then terminate the agreement"/>
+                    <button name="action_renew" type="object" string="Renew" 
+                           invisible="state != 'active'" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,terminated"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="invoices_count == 0">
+                            <field name="invoices_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="tenant_id"/>
+                            <field name="room_id"/>
+                            <field name="agent_id"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                        <group string="Financial Terms">
+                            <group>
+                                <field name="rent_amount"/>
+                                <field name="deposit_amount"/>
+                                <field name="token_amount"/>
+                            </group>
+                            <group>
+                                <field name="parking_charges"/>
+                                <field name="parking_remote_deposit"/>
+                                <field name="opening_balance" readonly="state != 'draft'"
+                                       help="Any outstanding balance from previous agreement"/>
+                                <field name="opening_balance_recorded" invisible="1"/>
+                            </group>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Terms and Conditions" name="terms">
+                            <field name="terms_and_conditions" placeholder="Enter terms and conditions..."/>
+                        </page>
+                        <page string="Special Conditions" name="special">
+                            <field name="special_conditions" placeholder="Additional special conditions..."/>
+                        </page>
+                        <page string="Payment Terms" name="payment">
+                            <group>
+                                <group>
+                                    <field name="payment_method"/>
+                                    <field name="payment_frequency"/>
+                                    <field name="payment_day"/>
+                                </group>
+                                <group>
+                                    <field name="auto_generate_invoices"/>
+                                    <field name="auto_post_invoices"/>
+                                    <field name="invoice_day"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Utilities" name="utilities">
+                            <group>
+                                <group>
+                                    <field name="electricity_included"/>
+                                    <field name="water_included"/>
+                                    <field name="gas_included"/>
+                                </group>
+                                <group>
+                                    <field name="parking_charges"/>
+                                <field name="parking_remote_deposit"/>
+                                <field name="opening_balance" invisible="state != 'draft'"
+                                       help="Any outstanding balance from previous agreement"/>
+                                <field name="opening_balance_recorded" invisible="1"/>
+                            </group>
+                        </group>
+                        </page>
+                        <page string="Occupants" name="occupants">
+                            <group>
+                                <group>
+                                    <field name="occupants_count"/>
+                                    <field name="primary_occupant_id" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="occupants_names"/>
+                                </group>
+                            </group>
+                            <field name="occupant_ids">
+                                <list editable="bottom" decoration-bf="is_primary == True">
+                                    <field name="is_primary" widget="boolean_toggle"/>
+                                    <field name="name"/>
+                                    <field name="occupant_type"/>
+                                    <field name="mobile"/>
+                                    <field name="email" optional="hide"/>
+                                    <field name="id_passport" optional="hide"/>
+                                    <field name="move_in_date"/>
+                                    <field name="move_out_date" optional="hide"/>
+                                    <field name="active" widget="boolean_toggle" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <!-- Temporary comment out other charges during upgrade
+                        <page string="Other Charges" name="other_charges">
+                            <field name="other_charges_ids">
+                                <tree editable="bottom">
+                                    <field name="charge_id" domain="[('active', '=', True)]" options="{'no_create': True}"/>
+                                    <field name="charge_name" readonly="1"/>
+                                    <field name="charge_type" readonly="1"/>
+                                    <field name="default_amount" widget="monetary" readonly="1"/>
+                                    <field name="custom_amount"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="active"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        -->
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Agreement Search View -->
+    <record id="view_property_agreement_search" model="ir.ui.view">
+        <field name="name">property.agreement.search</field>
+        <field name="model">property.agreement</field>
+        <field name="arch" type="xml">
+            <search string="Search Agreements">
+                <field name="name"/>
+                <field name="tenant_id"/>
+                <field name="room_id"/>
+                <field name="agent_id"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Expired" name="expired" domain="[('state', '=', 'expired')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Tenant" name="group_tenant" context="{'group_by': 'tenant_id'}"/>
+                    <filter string="Room" name="group_room" context="{'group_by': 'room_id'}"/>
+                    <filter string="Agent" name="group_agent" context="{'group_by': 'agent_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Agreement Action -->
+    <record id="action_property_agreement" model="ir.actions.act_window">
+        <field name="name">Rental Agreements</field>
+        <field name="res_model">property.agreement</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first rental agreement!
+            </p>
+            <p>
+                Rental agreements define the terms between tenants and rooms.
+            </p>
+        </field>
+    </record>
+
+</odoo>

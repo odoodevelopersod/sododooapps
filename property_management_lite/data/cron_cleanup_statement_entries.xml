@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled Action: Cleanup and Regenerate Statement Entries -->
+    <record id="ir_cron_cleanup_statement_entries" model="ir.cron">
+        <field name="name">Cleanup and Regenerate All Statement Entries</field>
+        <field name="model_id" ref="model_property_agreement"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_cleanup_and_regenerate_statement_entries()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

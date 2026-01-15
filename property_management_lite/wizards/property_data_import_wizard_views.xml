@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Property Data Import Wizard Views -->
+    
+    <record id="view_property_data_import_wizard_form" model="ir.ui.view">
+        <field name="name">property.data.import.wizard.form</field>
+        <field name="model">property.data.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Property Data Import Wizard">
+                <header>
+                    <button name="action_start_import" string="Start Import" type="object" 
+                            class="oe_highlight" invisible="state != 'upload'"/>
+                    <button name="action_restart" string="Import More Data" type="object" 
+                            class="oe_highlight" invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="upload,import,done"/>
+                </header>
+                
+                <sheet>
+                    <!-- Upload State -->
+                    <div invisible="state != 'upload'">
+                        <div class="oe_title">
+                            <h1>Property Management Data Import</h1>
+                            <p>Upload your CSV files to import property data into the system.</p>
+                        </div>
+                        
+                        <group string="CSV Files">
+                            <group>
+                                <field name="properties_file" filename="properties.csv"/>
+                                <field name="flats_file" filename="flats.csv"/>
+                                <field name="rooms_file" filename="rooms.csv"/>
+                            </group>
+                            <group>
+                                <field name="tenants_file" filename="tenants.csv"/>
+                                <field name="agreements_file" filename="agreements.csv"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Import Options">
+                            <field name="update_existing"/>
+                            <field name="create_missing"/>
+                        </group>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <strong>Import Order:</strong>
+                            <ol>
+                                <li>Properties (Buildings)</li>
+                                <li>Flats</li>
+                                <li>Rooms</li>
+                                <li>Tenants</li>
+                                <li>Rental Agreements</li>
+                            </ol>
+                            <p><strong>Note:</strong> You can upload individual files or all files at once. The system will import them in the correct order to maintain data relationships.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Import State -->
+                    <div invisible="state != 'import'">
+                        <div class="oe_title">
+                            <h1>Importing Data...</h1>
+                            <p>Please wait while your data is being imported.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+                            <p>This may take a few minutes depending on the amount of data.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Done State -->
+                    <div invisible="state != 'done'">
+                        <div class="oe_title">
+                            <h1>Import Completed!</h1>
+                            <p>Your property data has been successfully imported.</p>
+                        </div>
+                        
+                        <group string="Import Results" col="2">
+                            <field name="properties_created" readonly="1"/>
+                            <field name="flats_created" readonly="1"/>
+                            <field name="rooms_created" readonly="1"/>
+                            <field name="tenants_created" readonly="1"/>
+                            <field name="agreements_created" readonly="1"/>
+                        </group>
+                        
+                        <group string="Import Log">
+                            <field name="import_log" nolabel="1" readonly="1"/>
+                        </group>
+                        
+                        <div class="alert alert-success" role="alert">
+                            <strong>Success!</strong> Your data has been imported. You can now access your properties, tenants, and agreements through the Property Management menu.
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_property_data_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Property Data</field>
+        <field name="res_model">property.data.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

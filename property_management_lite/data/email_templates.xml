@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Invoice Email Template -->
+    <record id="email_template_property_invoice" model="mail.template">
+        <field name="name">Property Invoice - Send by Email</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="subject">Invoice {{ object.name }} for {{ object.room_id.name }} - {{ object.property_id.name }}</field>
+        <field name="email_from">{{ object.company_id.email }}</field>
+        <field name="partner_to">{{ object.tenant_id.id }}</field>
+        <field name="body_html" type="html">
+            <span>
+                <p>
+                    Dear <strong><span t-field="object.tenant_id.name"/></strong>,
+                    <hr class="mb-1 mt-1"/>
+                    Please find attached your invoice <strong><span t-field="object.name"/></strong> for 
+                    <strong><span t-field="object.room_id.name"/></strong> at <strong><span t-field="object.property_id.name"/></strong>.
+                    <br/><br/>
+                    <strong>Invoice Details:</strong><br/>
+                    - Invoice Date: <span t-field="object.invoice_date"/><br/>
+                    - Due Date: <span t-field="object.invoice_date_due"/><br/>
+                    - Amount: <span t-field="object.amount_total"/><br/>
+                    <t t-if="object.period_from and object.period_to">
+                        - Period: <span t-field="object.period_from"/> to <span t-field="object.period_to"/><br/>
+                    </t>
+                    <br/>
+                    <t t-if="object.amount_residual &gt; 0">
+                        <p style="color: #d9534f;">
+                            <strong>Amount Due: <span t-field="object.amount_residual"/></strong>
+                        </p>
+                    </t>
+                    <t t-if="object.notes">
+                        <p><strong>Terms and Conditions:</strong><br/>
+                        <span t-field="object.notes"/>
+                        </p>
+                    </t>
+                    <p>
+                        Please make the payment by the due date to avoid late fees.
+                    </p>
+                    <p>
+                        For any queries, please contact us at <span t-out="object.company_id.phone or object.company_id.email"/>.
+                    </p>
+                    <p>Thank you for your business!</p>
+                    <br/>
+                    Best regards,<br/>
+                    <strong><span t-field="object.company_id.name"/></strong><br/>
+                    <t t-if="object.property_id.manager_id">
+                        <span t-field="object.property_id.manager_id.name"/><br/>
+                        Property Manager<br/>
+                    </t>
+                    <t t-if="object.company_id.phone">
+                        Phone: <span t-field="object.company_id.phone"/><br/>
+                    </t>
+                    <t t-if="object.company_id.email">
+                        Email: <span t-field="object.company_id.email"/>
+                    </t>
+                </p>
+            </span>
+        </field>
+        <field name="report_template_ids" eval="[(4, ref('property_management_lite.action_report_property_invoice'))]"/>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- Overdue Invoice Reminder Template -->
+    <record id="email_template_overdue_invoice" model="mail.template">
+        <field name="name">Overdue Invoice Reminder</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="subject">REMINDER: Overdue Invoice {{ object.name }} - {{ object.property_id.name }}</field>
+        <field name="email_from">{{ object.company_id.email }}</field>
+        <field name="partner_to">{{ object.tenant_id.id }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="report_template_ids" eval="[(4, ref('property_management_lite.action_report_property_invoice'))]"/>
+        <field name="body_html" type="html">
+            <span>
+                <p>
+                    Dear <strong><span t-field="object.tenant_id.name"/></strong>,
+                    <hr class="mb-1 mt-1"/>
+                    <strong style="color: #d9534f;">PAYMENT REMINDER</strong>
+                    <br/><br/>
+                    This is a friendly reminder that your invoice <strong><span t-field="object.name"/></strong>
+                    for <strong><span t-field="object.room_id.name"/></strong> at <strong><span t-field="object.property_id.name"/></strong>
+                    is now overdue.
+                    <br/><br/>
+                    <strong>Invoice Details:</strong><br/>
+                    - Invoice Date: <span t-field="object.invoice_date"/><br/>
+                    - Due Date: <span style="color: #d9534f;"><strong><span t-field="object.invoice_date_due"/></strong></span><br/>
+                    - Amount Due: <span style="color: #d9534f;"><strong><span t-field="object.amount_residual"/></strong></span><br/>
+                    <t t-if="object.period_from and object.period_to">
+                        - Period: <span t-field="object.period_from"/> to <span t-field="object.period_to"/><br/>
+                    </t>
+                    <br/>
+                    <p style="background-color: #f2dede; border: 1px solid #ebccd1; padding: 10px; border-radius: 4px;">
+                        <strong>URGENT:</strong> Please arrange payment immediately to avoid:
+                        <br/>
+                        • Late payment fees
+                        <br/>
+                        • Additional charges
+                        <br/>
+                        • Potential lease termination
+                    </p>
+                    <p>
+                        If you have already made this payment, please disregard this notice and contact us with your payment details.
+                    </p>
+                    <p>
+                        If you are experiencing financial difficulties, please contact us immediately to discuss payment arrangements.
+                    </p>
+                    <p>
+                        <strong>Payment Methods:</strong><br/>
+                        • Cash payment at property office<br/>
+                        • Bank transfer<br/>
+                        • Online payment (if available)<br/>
+                        • Cheque payment
+                    </p>
+                    <p>
+                        For immediate assistance, please contact us at <span t-out="object.company_id.phone or object.company_id.email"/>.
+                    </p>
+                    <br/>
+                    Property Management Team,<br/>
+                    <strong><span t-field="object.company_id.name"/></strong><br/>
+                    <t t-if="object.property_id.manager_id">
+                        <span t-field="object.property_id.manager_id.name"/><br/>
+                        Property Manager<br/>
+                    </t>
+                    <t t-if="object.company_id.phone">
+                        Phone: <span t-field="object.company_id.phone"/><br/>
+                    </t>
+                    <t t-if="object.company_id.email">
+                        Email: <span t-field="object.company_id.email"/>
+                    </t>
+                </p>
+            </span>
+        </field>
+    </record>
+
+    <!-- Payment Receipt Email Template -->
+    <record id="email_template_property_receipt" model="mail.template">
+        <field name="name">Property Payment Receipt - Send by Email</field>
+        <field name="model_id" ref="model_account_payment"/>
+        <field name="subject">{{ object.company_id.name }} Payment Receipt (Ref {{ object.name or 'n/a' }})</field>
+        <field name="partner_to">{{ object.partner_id.id }}</field>
+        <field name="email_from">{{ object.company_id.email }}</field>
+        <field name="body_html" type="html">
+            <t t-if="object.reconciled_invoice_ids or object.invoice_ids" t-set="invoice" t-value="(object.reconciled_invoice_ids or object.invoice_ids)[0]"/>
+
+            <span>
+                <p>
+                    Dear <strong><span t-field="object.tenant_id.name"/></strong>,
+                    <hr class="mb-1 mt-1"/>
+                    Thank you for your payment! We have received your payment of 
+                    <strong><span t-field="object.amount"/></strong>
+                    for invoice <strong><span t-if="invoice" t-field="invoice.name"/></strong>.
+                    <br/><br/>
+                    <strong>Payment Details:</strong><br/>
+                    - Receipt Number: <span t-field="object.name"/><br/>
+                    - Payment Date: <span t-field="object.date"/><br/>
+                    - Amount Paid: <span t-field="object.amount"/><br/>
+                    - Payment Method: <span t-field="object.payment_method_id.name"/><br/>
+                    <t t-if="object.reference">
+                        - Reference: <span t-field="object.reference"/><br/>
+                    </t>
+                    <br/>
+                    <strong>Property Details:</strong><br/>
+                    - Property: <span t-if="invoice" t-field="invoice.property_id.name"/><br/>
+                    - Room: <span t-if="invoice" t-field="invoice.room_id.name"/><br/>
+                    <br/>
+                    <t t-if="invoice">
+                        <t t-if="invoice.amount_residual &gt; 0">
+                            <p style="color: #f0ad4e;">
+                                <strong>Remaining Balance: <span t-if="invoice" t-field="invoice.amount_residual"/></strong>
+                            </p>
+                        </t>
+                        <t t-if="invoice.amount_residual == 0">
+                            <p style="color: #5cb85c;">
+                                <strong>Invoice Fully Paid - Thank you!</strong>
+                            </p>
+                        </t>
+                    </t>
+                    <p>
+                        Please keep this receipt for your records. The attached PDF receipt can be used for any official purposes.
+                    </p>
+                    <p>
+                        If you have any questions about this payment or your account, please don't hesitate to contact us.
+                    </p>
+                    <br/>
+                    Best regards,<br/>
+                    <strong><span t-field="object.company_id.name"/></strong><br/>
+                    <t t-if="object.company_id.phone">
+                        Phone: <span t-field="object.company_id.phone"/><br/>
+                    </t>
+                    <t t-if="object.company_id.email">
+                        Email: <span t-field="object.company_id.email"/>
+                    </t>
+                </p>
+            </span>
+        </field>
+        <!-- Uncomment and set the correct report template if available -->
+        <field name="report_template_ids" eval="[(4, ref('property_management_lite.action_report_property_receipt'))]"/>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

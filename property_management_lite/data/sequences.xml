@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Invoice Sequence -->
+    <record id="seq_property_invoice" model="ir.sequence">
+        <field name="name">Property Invoice</field>
+        <field name="code">property.invoice</field>
+        <field name="prefix">INV/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Payment Sequence -->
+    <record id="seq_property_payment" model="ir.sequence">
+        <field name="name">Property Payment</field>
+        <field name="code">property.payment</field>
+        <field name="prefix">PAY/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Collection Sequence (if not already exists) -->
+    <record id="seq_property_collection" model="ir.sequence">
+        <field name="name">Property Collection</field>
+        <field name="code">property.collection</field>
+        <field name="prefix">COL/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

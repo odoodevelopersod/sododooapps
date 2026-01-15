@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Partner Categories -->
+    <record id="partner_category_tenant" model="res.partner.category">
+        <field name="name">Tenant</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="partner_category_landlord" model="res.partner.category">
+        <field name="name">Landlord</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="partner_category_property_vendor" model="res.partner.category">
+        <field name="name">Property Vendor</field>
+        <field name="color">6</field>
+    </record>
+
+    <!-- Room Types -->
+    <record id="room_type_master" model="property.room.type">
+        <field name="name">Master Room</field>
+        <field name="code">MASTER</field>
+        <field name="sequence">10</field>
+        <field name="default_rent">2500</field>
+        <field name="default_deposit">2500</field>
+        <field name="max_occupancy">2</field>
+        <field name="has_private_bathroom">True</field>
+        <field name="description">Master bedroom with private bathroom and wardrobe</field>
+    </record>
+
+    <record id="room_type_partition" model="property.room.type">
+        <field name="name">Partition Room</field>
+        <field name="code">PARTITION</field>
+        <field name="sequence">20</field>
+        <field name="default_rent">1800</field>
+        <field name="default_deposit">1800</field>
+        <field name="max_occupancy">1</field>
+        <field name="has_private_bathroom">False</field>
+        <field name="description">Partitioned room with shared facilities</field>
+    </record>
+
+    <record id="room_type_sharing" model="property.room.type">
+        <field name="name">Sharing Room</field>
+        <field name="code">SHARING</field>
+        <field name="sequence">30</field>
+        <field name="default_rent">1200</field>
+        <field name="default_deposit">1200</field>
+        <field name="max_occupancy">2</field>
+        <field name="has_private_bathroom">False</field>
+        <field name="description">Shared room with bunk beds</field>
+    </record>
+
+    <record id="room_type_maid" model="property.room.type">
+        <field name="name">Maid Room</field>
+        <field name="code">MAID</field>
+        <field name="sequence">40</field>
+        <field name="default_rent">800</field>
+        <field name="default_deposit">800</field>
+        <field name="max_occupancy">1</field>
+        <field name="has_private_bathroom">True</field>
+        <field name="description">Small room typically for domestic helpers</field>
+    </record>
+
+    <record id="room_type_separate" model="property.room.type">
+        <field name="name">Separate Room</field>
+        <field name="code">SEPARATE</field>
+        <field name="sequence">50</field>
+        <field name="default_rent">2000</field>
+        <field name="default_deposit">2000</field>
+        <field name="max_occupancy">1</field>
+        <field name="has_private_bathroom">True</field>
+        <field name="description">Independent room with separate entrance</field>
+    </record>
+
+    <!-- Sequences -->
+    <record id="seq_property_collection" model="ir.sequence">
+        <field name="name">Property Collection</field>
+        <field name="code">property.collection</field>
+        <field name="prefix">COL</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!-- Default sequences for the module -->
+    <!-- Note: Default property manager should be assigned manually during setup -->
+</odoo>

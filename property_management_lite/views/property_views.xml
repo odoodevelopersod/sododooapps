@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Property Tree View -->
+    <record id="view_property_property_tree" model="ir.ui.view">
+        <field name="name">property.property.tree</field>
+        <field name="model">property.property</field>
+        <field name="arch" type="xml">
+            <list string="Properties" decoration-info="state=='draft'" decoration-success="state=='active'" decoration-warning="state=='maintenance'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="property_type"/>
+                <field name="city"/>
+                <field name="total_flats"/>
+                <field name="total_rooms"/>
+                <field name="occupied_rooms"/>
+                <field name="occupancy_rate" widget="percentage"/>
+                <field name="monthly_rent_income" widget="monetary"/>
+                <field name="state"/>
+                <field name="landlord_id"/>
+                <field name="manager_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Property Form View -->
+    <record id="view_property_property_form" model="ir.ui.view">
+        <field name="name">property.property.form</field>
+        <field name="model">property.property</field>
+        <field name="arch" type="xml">
+            <form string="Property">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" class="btn-primary" invisible="state == 'active'"/>
+                    <button name="action_maintenance" string="Maintenance" type="object" invisible="state == 'maintenance'"/>
+                    <button name="action_deactivate" string="Deactivate" type="object" invisible="state == 'inactive'"/>
+                    <button name="action_recalculate_computed_fields" string="Recalculate Statistics" type="object" class="btn-secondary" 
+                            help="Manually recalculate all computed fields to ensure accurate counts"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,maintenance,inactive"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_flats" type="object" class="oe_stat_button" icon="fa-building">
+                            <field name="total_flats" widget="statinfo" string="Flats"/>
+                        </button>
+                        <button name="action_view_rooms" type="object" class="oe_stat_button" icon="fa-bed">
+                            <field name="total_rooms" widget="statinfo" string="Rooms"/>
+                        </button>
+                        <button name="action_view_collections" type="object" class="oe_stat_button" icon="fa-money">
+                            <field name="monthly_rent_income" widget="statinfo" string="Monthly Income"/>
+                        </button>
+                    </div>
+                    
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Property Name"/>
+                        </h1>
+                        <h2>
+                            <field name="code" placeholder="Property Code"/>
+                        </h2>
+                    </div>
+                    
+                    <group>
+                        <group name="basic_info">
+                            <field name="property_type"/>
+                            <field name="landlord_id"/>
+                            <field name="manager_id"/>
+                            <field name="property_value"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group name="location">
+                            <field name="address"/>
+                            <field name="city"/>
+                            <field name="country_id"/>
+                        </group>
+                    </group>
+                    
+                    <group name="statistics">
+                        <group name="occupancy_stats">
+                            <field name="total_flats" readonly="1"/>
+                            <field name="total_rooms" readonly="1"/>
+                            <field name="occupied_rooms" readonly="1"/>
+                            <field name="vacant_rooms" readonly="1"/>
+                            <field name="occupancy_rate" widget="percentage" readonly="1"/>
+                        </group>
+                        <group name="financial_stats">
+                            <field name="monthly_rent_income" readonly="1"/>
+                            <field name="monthly_expenses" readonly="1"/>
+                            <field name="monthly_profit" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Flats" name="flats">
+                            <field name="flat_ids">
+                                <list editable="bottom">
+                                    <field name="flat_number"/>
+                                    <field name="floor"/>
+                                    <field name="flat_type"/>
+                                    <field name="rooms_count"/>
+                                    <field name="total_area"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Collections" name="collections">
+                            <field name="collection_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="tenant_id"/>
+                                    <field name="room_id"/>
+                                    <field name="amount_collected"/>
+                                    <field name="payment_method"/>
+                                    <field name="status"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Property Kanban View -->
+    <record id="view_property_property_kanban" model="ir.ui.view">
+        <field name="name">property.property.kanban</field>
+        <field name="model">property.property</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="total_rooms"/>
+                <field name="occupied_rooms"/>
+                <field name="occupancy_rate"/>
+                <field name="monthly_rent_income"/>
+                <field name="state"/>
+                <field name="image"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <img t-att-src="kanban_image('property.property', 'image_medium', record.id.raw_value)" alt="Property"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                <div class="o_kanban_record_subtitle">
+                                    <field name="code"/> - <field name="city"/>
+                                </div>
+                                <div class="oe_kanban_bottom_left">
+                                    <div class="o_kanban_inline_block">
+                                        <field name="total_rooms"/> Rooms
+                                    </div>
+                                    <div class="o_kanban_inline_block">
+                                        <field name="occupancy_rate" widget="percentage"/> Occupied
+                                    </div>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="monthly_rent_income" widget="monetary"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Property Action -->
+    <record id="action_property_property" model="ir.actions.act_window">
+        <field name="name">Properties</field>
+        <field name="res_model">property.property</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first property!
+            </p>
+            <p>
+                Manage your property portfolio with detailed information about flats, rooms, and tenants.
+            </p>
+        </field>
+    </record>
+</odoo>

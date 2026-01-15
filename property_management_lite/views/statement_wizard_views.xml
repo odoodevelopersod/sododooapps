@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Statement Report Wizard Form View -->
+    <record id="view_property_statement_wizard_form" model="ir.ui.view">
+        <field name="name">property.statement.wizard.form</field>
+        <field name="model">property.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Statement Report">
+                <group>
+                    <group>
+                        <field name="tenant_id"/>
+                        <field name="report_type"/>
+                    </group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="include_zero_transactions"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate_report" string="Generate Report" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Statement Report Wizard Action -->
+    <record id="action_property_statement_wizard" model="ir.actions.act_window">
+        <field name="name">Generate Statement Report</field>
+        <field name="res_model">property.statement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

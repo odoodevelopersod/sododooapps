@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled Action to Generate Monthly Invoices -->
+    <record id="ir_cron_generate_monthly_invoices" model="ir.cron">
+        <field name="name">Property Management: Generate Monthly Invoices</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">model.create_monthly_invoices()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+        <field name="user_id" ref="base.user_admin"/>
+    </record>
+
+    <!-- Scheduled Action to Recalculate Computed Fields -->
+    <record id="ir_cron_recalculate_computed_fields" model="ir.cron">
+        <field name="name">Property Management: Recalculate Computed Fields</field>
+        <field name="model_id" ref="model_property_property"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_recalculate_all_computed_fields()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">False</field>
+        <field name="user_id" ref="base.user_admin"/>
+    </record>
+</odoo>

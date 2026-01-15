@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="product_property_rent" model="product.template">
+            <field name="name">Monthly Rent</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_deposit" model="product.template">
+            <field name="name">Security Deposit</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_maintenance" model="product.template">
+            <field name="name">Maintenance</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_utility" model="product.template">
+            <field name="name">Utilities</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_penalty" model="product.template">
+            <field name="name">Late Fee</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_dewa" model="product.template">
+            <field name="name">DEWA (Electricity &amp; Water)</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_maintenance_purchase" model="product.template">
+            <field name="name">Maintenance</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_plumbing" model="product.template">
+            <field name="name">Plumbing Items</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_electrical" model="product.template">
+            <field name="name">Electrical Items</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_paint" model="product.template">
+            <field name="name">Paint</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_ac" model="product.template">
+            <field name="name">A.C (Air Conditioning)</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_labor" model="product.template">
+            <field name="name">Labor</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_cleaning" model="product.template">
+            <field name="name">Cleaning</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_security" model="product.template">
+            <field name="name">Security</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_staff_payment" model="product.template">
+            <field name="name">Staff Payment</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_repair" model="product.template">
+            <field name="name">Repair</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_utility_other" model="product.template">
+            <field name="name">Other Utility Bills</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_insurance" model="product.template">
+            <field name="name">Insurance</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_tax" model="product.template">
+            <field name="name">Property Tax</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_commission" model="product.template">
+            <field name="name">Agent Commission</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_legal" model="product.template">
+            <field name="name">Legal Fees</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+
+        <record id="product_property_other" model="product.template">
+            <field name="name">Other</field>
+            <field name="type">service</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="True"/>
+        </record>
+    </data>
+</odoo>

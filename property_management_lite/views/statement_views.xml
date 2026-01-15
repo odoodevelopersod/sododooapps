@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Statement of Account List View -->
+    <record id="view_property_statement_tree" model="ir.ui.view">
+        <field name="name">property.statement.tree</field>
+        <field name="model">property.statement</field>
+        <field name="arch" type="xml">
+            <list string="Statement of Account" create="false" default_order="transaction_date desc">
+                <field name="transaction_date"/>
+                <field name="reference"/>
+                <field name="description"/>
+                <field name="transaction_type"/>
+                <field name="debit_amount" sum="Total Debits"/>
+                <field name="credit_amount" sum="Total Credits"/>
+                <field name="running_balance"/>
+                <field name="tenant_id" optional="hide"/>
+                <field name="room_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Statement of Account Form View -->
+    <record id="view_property_statement_form" model="ir.ui.view">
+        <field name="name">property.statement.form</field>
+        <field name="model">property.statement</field>
+        <field name="arch" type="xml">
+            <form string="Statement Entry" create="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="tenant_id"/>
+                            <field name="transaction_date"/>
+                            <field name="reference"/>
+                            <field name="transaction_type"/>
+                        </group>
+                        <group>
+                            <field name="debit_amount"/>
+                            <field name="credit_amount"/>
+                            <field name="running_balance"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <group string="Related Records">
+                        <group>
+                            <field name="room_id"/>
+                            <field name="agreement_id"/>
+                        </group>
+                        <group>
+                            <field name="collection_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Statement Search View -->
+    <record id="view_property_statement_search" model="ir.ui.view">
+        <field name="name">property.statement.search</field>
+        <field name="model">property.statement</field>
+        <field name="arch" type="xml">
+            <search string="Statement of Account">
+                <field name="tenant_id"/>
+                <field name="reference"/>
+                <field name="transaction_type"/>
+                <field name="room_id"/>
+                <separator/>
+                <filter string="Rent Payments" name="filter_rent" domain="[('transaction_type', '=', 'rent')]"/>
+                <filter string="Deposits" name="filter_deposit" domain="[('transaction_type', '=', 'deposit')]"/>
+                <filter string="Parking Charges" name="filter_parking" domain="[('transaction_type', '=', 'parking')]"/>
+                <filter string="Other Charges" name="filter_other" domain="[('transaction_type', '=', 'other_charges')]"/>
+                <separator/>
+                <filter string="This Month" name="filter_this_month" 
+                        domain="[('transaction_date', '>=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-01')), 
+                                 ('transaction_date', '&lt;', ((context_today().replace(day=1) + datetime.timedelta(days=32)).replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 3 Months" name="filter_3_months" 
+                        domain="[('transaction_date', '>=', (context_today() - datetime.timedelta(days=90)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Tenant" name="group_tenant" context="{'group_by': 'tenant_id'}"/>
+                    <filter string="Transaction Type" name="group_type" context="{'group_by': 'transaction_type'}"/>
+                    <filter string="Month" name="group_month" context="{'group_by': 'transaction_date:month'}"/>
+                    <filter string="Room" name="group_room" context="{'group_by': 'room_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Statement Action -->
+    <record id="action_property_statement" model="ir.actions.act_window">
+        <field name="name">Statement of Account</field>
+        <field name="res_model">property.statement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_property_statement_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first statement entry!
+            </p>
+            <p>
+                Statement entries are automatically created from collections and agreements.
+                This provides a complete transaction history for each tenant.
+            </p>
+        </field>
+    </record>
+
+    <!-- Statement Pivot View for Analysis -->
+    <record id="view_property_statement_pivot" model="ir.ui.view">
+        <field name="name">property.statement.pivot</field>
+        <field name="model">property.statement</field>
+        <field name="arch" type="xml">
+            <pivot string="Statement Analysis">
+                <field name="tenant_id" type="row"/>
+                <field name="transaction_type" type="col"/>
+                <field name="debit_amount" type="measure"/>
+                <field name="credit_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Statement Graph View -->
+    <record id="view_property_statement_graph" model="ir.ui.view">
+        <field name="name">property.statement.graph</field>
+        <field name="model">property.statement</field>
+        <field name="arch" type="xml">
+            <graph string="Statement Trends" type="line">
+                <field name="transaction_date" interval="month"/>
+                <field name="debit_amount" type="measure"/>
+                <field name="credit_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action with Pivot and Graph Views -->
+    <record id="action_property_statement_analysis" model="ir.actions.act_window">
+        <field name="name">Statement Analysis</field>
+        <field name="res_model">property.statement</field>
+        <field name="view_mode">pivot,graph,list,form</field>
+        <field name="search_view_id" ref="view_property_statement_search"/>
+    </record>
+</odoo>

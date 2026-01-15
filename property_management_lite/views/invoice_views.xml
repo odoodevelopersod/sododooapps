@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="invoice_form_inherit" model="ir.ui.view">
+        <field name="name">account.move.form.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[1]//group[1]" position="inside">
+                <!-- <group> -->
+                    <field name="tenant_id" readonly="1" force_save="1" options="{'no_create': True}" invisible="move_type not in ('out_invoice','out_refund')"/>
+                    <field name="property_id" options="{'no_create': True}" readonly="state=='posted'"/>
+                    <field name="room_id" options="{'no_create': True}" readonly="state=='posted'"/>
+                    <field name="agreement_id" options="{'no_create': True}" readonly="state=='posted'" domain="[('room_id','=',room_id)]" invisible="move_type not in ('out_invoice','out_refund')"/>
+                <!-- </group> -->
+                <!-- <group> -->
+                    <field name="invoice_type" invisible="move_type not in ('out_invoice','out_refund')" readonly="state=='posted'"/>
+                    <field name="period_from" invisible="move_type not in ('out_invoice','out_refund')" readonly="state=='posted'"/>
+                    <field name="period_to" invisible="move_type not in ('out_invoice','out_refund')" readonly="state=='posted'"/>
+                    <field name="ref"/>
+                <!-- </group> -->
+            </xpath>
+            <xpath expr="//page[@name='other_info']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='aml_tab']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_bank_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[@name='journal_div']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='account_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_invoice_search_inherit" model="ir.ui.view">
+        <field name="name">account.move.search.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="tenant_id"/>
+                <field name="property_id"/>
+                <field name="room_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='draft']" position="after">
+                <separator/>
+                <filter string="This Month" name="this_month" 
+                        domain="[('invoice_date', '&gt;=', (context_today() - datetime.timedelta(days=30)))]"/>
+            </xpath>
+            <xpath expr="//group[1]" position="inside">
+                <filter string="Tenant" name="group_tenant" context="{'group_by': 'tenant_id'}"/>
+                <filter string="Property" name="group_property" context="{'group_by': 'property_id'}"/>
+                <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                <filter string="Type" name="group_type" context="{'group_by': 'invoice_type'}"/>
+                <filter string="Month" name="group_month" context="{'group_by': 'invoice_date:month'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account_payment_form_inherit" model="ir.ui.view">
+        <field name="name">account.payment.form.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[1]//group[1]" position="inside">
+                <field name="collection_id"/>
+                <field name="tenant_id" invisible="0" options="{'no_create': True}"/>
+                <!-- <field name="room_id" invisible="0" options="{'no_create': True}" domain="[('current_tenant_id', '=', tenant_id)]"/>
+                <field name="property_id" invisible="0" options="{'no_create': True}"/>
+                <field name="agreement_id" invisible="0" options="{'no_create': True}"/> -->
+            </xpath>
+            <xpath expr="//group[1]//group[2]" position="inside">
+                <field name="reference"/>
+                <field name="notes"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_bank_id'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_bank_id'][2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_payment_register_form_inherit" model="ir.ui.view">
+        <field name="name">account.payment.register.form.inherit</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[1]" position="inside">
+                <field name="tenant_id" invisible="1" options="{'no_create': True}"/>
+                <!-- <field name="room_id" invisible="1" options="{'no_create': True}" domain="[('current_tenant_id', '=', tenant_id)]"/>
+                <field name="property_id" invisible="1" options="{'no_create': True}"/>
+                <field name="agreement_id" invisible="1" options="{'no_create': True}"/> -->
+            </xpath>
+            <xpath expr="//group[1]//group[1]" position="inside">
+                <field name="reference"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_bank_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+        <record id="account_send_payment_receipt_by_email_custom" model="ir.actions.act_window">
+            <field name="name">Send Payment Receipt</field>
+            <field name="res_model">mail.compose.message</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context" eval="{
+                'mail_post_autofollow': True,
+                'default_composition_mode': 'comment',
+                'default_template_id': ref('property_management_lite.email_template_property_receipt'),
+                'default_email_layout_xmlid': 'mail.mail_notification_light',
+            }"/>
+            <field name="binding_model_id" ref="model_account_payment"/>
+            <field name="binding_view_types">form</field>
+            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+        </record>
+
+</odoo>

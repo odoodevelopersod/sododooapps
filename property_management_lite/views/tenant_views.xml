@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tenant Tree View -->
+    <record id="view_property_tenant_tree" model="ir.ui.view">
+        <field name="name">property.tenant.tree</field>
+        <field name="model">property.tenant</field>
+        <field name="arch" type="xml">
+            <list string="Tenants" decoration-success="status=='active'" decoration-info="status=='prospect'" decoration-muted="status=='inactive'"
+                  decoration-warning="outstanding_status in ['overdue_30', 'overdue_60']" 
+                  decoration-danger="outstanding_status in ['overdue_90', 'overdue_90plus', 'critical']">
+                <field name="name"/>
+                <field name="mobile"/>
+                <field name="email"/>
+                <field name="nationality"/>
+                <field name="current_room_number" string="Current Room"/>
+                <field name="status"/>
+                <field name="total_outstanding_dues" widget="monetary" string="Outstanding"/>
+                <field name="outstanding_status" string="Dues Status"/>
+                <field name="current_balance" widget="monetary" string="Statement Balance" optional="show"/>
+                <field name="total_paid" widget="monetary"/>
+                <field name="last_payment_date"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="current_room_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Tenant Form View -->
+    <record id="view_property_tenant_form" model="ir.ui.view">
+        <field name="name">property.tenant.form</field>
+        <field name="model">property.tenant</field>
+        <field name="arch" type="xml">
+            <form string="Tenant">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" class="btn-primary" invisible="status == 'active'"/>
+                    <button name="action_deactivate" string="Deactivate" type="object" invisible="status == 'inactive'"/>
+                    <button name="action_blacklist" string="Blacklist" type="object" invisible="status == 'blacklisted'" confirm="Are you sure you want to blacklist this tenant?"/>
+                    <field name="status" widget="statusbar" statusbar_visible="prospect,active,inactive"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_agreements" type="object" class="oe_stat_button" icon="fa-file-text">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Active Agreements</span>
+                                <span class="o_stat_value">
+                                    <field name="active_agreements_count" decoration-success="1"/>/<field name="total_agreements_count"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_collections" type="object" class="oe_stat_button" icon="fa-money">
+                            <field name="total_paid" widget="statinfo" string="Total Paid"/>
+                        </button>
+                        <button name="%(action_property_outstanding_dues)d" type="action" class="oe_stat_button" icon="fa-exclamation-triangle"
+                                context="{'search_default_tenant_id': id}">
+                            <field name="total_outstanding_dues" widget="statinfo" string="Outstanding"/>
+                        </button>
+                        <button name="action_view_statement" type="object" class="oe_stat_button" icon="fa-list-alt">
+                            <field name="statement_count" widget="statinfo" string="Statement Entries"/>
+                        </button>
+                    </div>
+                    
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Full Name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group name="basic_info">
+                            <field name="mobile"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="nationality"/>
+                            <field name="current_room_id" readonly="1"/>
+                        </group>
+                        <group name="identification">
+                            <field name="id_type"/>
+                            <field name="id_passport"/>
+                            <field name="date_joined"/>
+                        </group>
+                    </group>
+                    
+                    <group name="professional_info" string="Professional Information">
+                        <group>
+                            <field name="company_name"/>
+                            <field name="job_title"/>
+                            <field name="work_phone"/>
+                            <field name="monthly_income"/>
+                        </group>
+                    </group>
+                    
+                    <group name="emergency_contact" string="Emergency Contact">
+                        <group>
+                            <field name="emergency_contact_name"/>
+                            <field name="emergency_contact_phone"/>
+                            <field name="emergency_contact_relation"/>
+                        </group>
+                    </group>
+                    
+                    <group name="preferences" string="Preferences">
+                        <group>
+                            <field name="payment_method"/>
+                            <field name="preferred_language"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Outstanding Dues Section -->
+                    <group name="outstanding_info" string="Outstanding Dues" invisible="status != 'active'">
+                        <group>
+                            <field name="rent_outstanding" widget="monetary"/>
+                            <field name="deposit_outstanding" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="parking_outstanding" widget="monetary"/>
+                            <field name="total_outstanding_dues" widget="monetary" class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Statement Actions -->
+                    <group name="statement_actions" string="Statement Actions" invisible="status != 'active'">
+                        <div>
+                            <button name="action_generate_statement_report" string="Generate Statement" 
+                                   type="object" class="btn-primary oe_highlight" icon="fa-file-text-o"/>
+                            <button name="action_recalculate_statements" string="Recalculate Statement" 
+                                   type="object" class="btn-warning" icon="fa-refresh"
+                                   help="Delete and regenerate all statement entries"
+                                   confirm="This will delete all existing statement entries and recreate them. Continue?"/>
+                        </div>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Agreements" name="agreements">
+                            <field name="agreement_ids" readonly="1">
+                                <list>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="room_id"/>
+                                    <field name="rent_amount"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Collections" name="collections">
+                            <field name="collection_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="room_id"/>
+                                    <field name="collection_type"/>
+                                    <field name="amount_collected"/>
+                                    <field name="payment_method"/>
+                                    <field name="status"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="document_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="create_date"/>
+                                    <field name="mimetype"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Additional notes about the tenant..."/>
+                        </page>
+                        <page string="Statement of Account" name="statement">
+                            <field name="statement_ids" readonly="1">
+                                <list>
+                                    <field name="transaction_date"/>
+                                    <field name="reference"/>
+                                    <field name="description"/>
+                                    <field name="transaction_type"/>
+                                    <field name="debit_amount" sum="Total Debits"/>
+                                    <field name="credit_amount" sum="Total Credits"/>
+                                    <field name="running_balance"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tenant Action -->
+    <record id="action_property_tenant" model="ir.actions.act_window">
+        <field name="name">Tenants</field>
+        <field name="res_model">property.tenant</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first tenant!
+            </p>
+            <p>
+                Manage tenant profiles with complete contact information, documents, and rental history.
+            </p>
+        </field>
+    </record>
+</odoo>

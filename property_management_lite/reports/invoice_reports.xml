@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Invoice Report Action -->
+    <record id="action_report_property_invoice" model="ir.actions.report">
+        <field name="name">Property Invoice</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">property_management_lite.report_property_invoice</field>
+        <field name="report_file">property_management_lite.report_property_invoice</field>
+        <field name="binding_model_id" ref="model_account_move"/>
+        <field name="print_report_name">('Invoice - ' + object.name)</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Invoice Report Template -->
+    <template id="report_property_invoice">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Custom Styles -->
+                        <style>
+                            .invoice-header { 
+                                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+                                padding: 15px; 
+                                border-radius: 8px; 
+                                margin-bottom: 20px; 
+                                border: 1px solid #dee2e6;
+                            }
+                            .invoice-title { 
+                                font-size: 1.8rem; 
+                                font-weight: bold; 
+                                color: #2c3e50; 
+                                margin-bottom: 5px;
+                            }
+                            .invoice-number { 
+                                font-size: 1.6rem; 
+                                color: #3498db; 
+                                font-weight: 600;
+                            }
+                            .company-info { 
+                                background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); 
+                                color: white; 
+                                padding: 12px; 
+                                border-radius: 6px; 
+                                min-height: 120px;
+                            }
+                            .client-info { 
+                                background-color: #ecf0f1; 
+                                padding: 12px; 
+                                border-radius: 6px; 
+                                border: 1px solid #bdc3c7;
+                                min-height: 120px;
+                            }
+                            .invoice-table th { 
+                                background-color: #34495e; 
+                                color: white; 
+                                padding: 10px; 
+                                font-weight: 600;
+                                border: none;
+                            }
+                            .invoice-table td { 
+                                padding: 8px; 
+                                border-bottom: 1px solid #ecf0f1; 
+                                vertical-align: top;
+                            }
+                            .total-section { 
+                                background-color: #f8f9fa; 
+                                padding: 12px; 
+                                border-radius: 6px; 
+                                border: 1px solid #dee2e6;
+                            }
+                            .amount-due { 
+                                color: #e74c3c; 
+                                font-weight: bold; 
+                                font-size: 1.1rem; 
+                            }
+                            .paid-amount { 
+                                color: #27ae60; 
+                                font-weight: bold; 
+                            }
+                            .mr-1 { margin-right: 4px; }
+                            .mr-2 { margin-right: 8px; }
+                            .h-100 { height: 100%; }
+                            .d-flex { display: flex; }
+                            .align-items-center { align-items: center; }
+                            .justify-content-center { justify-content: center; }
+                            @page { margin: 15mm; }
+                        </style>
+
+                        <!-- Invoice Header -->
+                        <div class="invoice-header row mb-3">
+                            <div class="col-7">
+                                <h1 class="invoice-title mb-1">
+                                    <i class="fa fa-file-text-o mr-2"/>
+                                    <span t-if="o.state == 'draft'">Draft Invoice</span>
+                                    <span t-else="">INVOICE</span>
+                                </h1>
+                                <p class="text-muted mb-0" style="font-size: 1rem;">Property Rental Invoice</p>
+                            </div>
+                            <div class="col-5 text-right">
+                                <h2 class="invoice-number mt-0 mb-1" t-field="o.name" style="color: #3498db; font-size: 1.6rem;"/>
+                                <div style="line-height: 1.4;">
+                                    <p class="mb-1" style="font-size: 0.9rem;">
+                                        <strong>Date:</strong> <span t-field="o.invoice_date" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}"/>
+                                    </p>
+                                    <p class="mb-0" style="font-size: 0.9rem;">
+                                        <strong>Due:</strong> <span t-field="o.invoice_date_due" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}" 
+                                               t-attf-class="#{(o.invoice_date_due and o.invoice_date_due &lt; datetime.date.today() and o.state != 'paid') and 'text-danger font-weight-bold' or ''}"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Party Information -->
+                        <div class="row mb-3">
+                            <div class="col-6 pr-2">
+                                <div class="company-info h-100">
+                                    <h5 class="mb-2"><i class="fa fa-building mr-2"/> From:</h5>
+                                    <div style="line-height: 1.4;">
+                                        <div class="font-weight-bold mb-1" t-field="o.company_id.name" style="font-size: 1rem;"/>
+                                        <div t-field="o.company_id.partner_id" 
+                                             t-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': True}" class="mb-1" style="font-size: 0.85rem;"/>
+                                        <div t-if="o.company_id.phone" class="mb-1" style="font-size: 0.85rem;">
+                                            <i class="fa fa-phone mr-1"/> <span t-field="o.company_id.phone"/>
+                                        </div>
+                                        <div t-if="o.company_id.email" class="mb-0" style="font-size: 0.85rem;">
+                                            <i class="fa fa-envelope mr-1"/> <span t-field="o.company_id.email"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 pl-2">
+                                <div class="client-info h-100">
+                                    <h5 class="mb-2"><i class="fa fa-user mr-2"/> Bill To:</h5>
+                                    <div style="line-height: 1.4;">
+                                        <div class="font-weight-bold mb-1" t-field="o.tenant_id.name" style="font-size: 1rem;"/>
+                                        <div t-if="o.tenant_id.phone" class="mb-1" style="font-size: 0.85rem;">
+                                            <i class="fa fa-phone mr-1"/> <span t-field="o.tenant_id.phone"/>
+                                        </div>
+                                        <div t-if="o.tenant_id.email" class="mb-1" style="font-size: 0.85rem;">
+                                            <i class="fa fa-envelope mr-1"/> <span t-field="o.tenant_id.email"/>
+                                        </div>
+                                        <div t-if="o.tenant_id.id_passport" class="mb-0" style="font-size: 0.85rem;">
+                                            <i class="fa fa-id-card-o mr-1"/> ID: <span t-field="o.tenant_id.id_passport"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Property Information -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="alert alert-info mb-0" style="background-color: #e8f4f8; border-left: 4px solid #3498db; padding: 10px;">
+                                    <div class="row align-items-center text-center">
+                                        <div class="col-4">
+                                            <strong style="color: #2c3e50;"><i class="fa fa-building mr-1"/>Property:</strong>
+                                            <span t-field="o.property_id.name" style="font-weight: 500; margin-left: 5px;"/>
+                                        </div>
+                                        <div class="col-4">
+                                            <strong style="color: #2c3e50;"><i class="fa fa-bed mr-1"/>Room:</strong>
+                                            <span t-field="o.room_id.name" style="font-weight: 500; margin-left: 5px;"/>
+                                        </div>
+                                        <div class="col-4" t-if="o.period_from and o.period_to">
+                                            <strong style="color: #2c3e50;"><i class="fa fa-calendar mr-1"/>Period:</strong>
+                                            <span t-field="o.period_from" t-options="{'widget': 'date', 'format': 'MMM dd'}"/> - <span t-field="o.period_to" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Items Table -->
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-condensed invoice-table" style="border: 1px solid #dee2e6;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50%;">Description</th>
+                                            <th class="text-right" style="width: 15%;">Qty</th>
+                                            <th class="text-right" style="width: 15%;">Unit Price</th>
+                                            <th class="text-right" style="width: 20%;">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.invoice_line_ids" t-as="line">
+                                            <td>
+                                                <div style="font-weight: bold; color: #2c3e50;">
+                                                    <span t-field="line.name"/>
+                                                </div>
+                                                <!-- <div style="font-weight: bold; color: #2c3e50;">
+                                                    Monthly Rent - <span t-field="o.room_id.name"/>
+                                                </div>
+                                                <div class="text-muted small">
+                                                    <i class="fa fa-building"/> <span t-field="o.property_id.name"/>
+                                                </div>
+                                                <div class="text-muted small" t-if="o.period_from and o.period_to">
+                                                    <i class="fa fa-calendar"/> Period: <span t-field="o.period_from" t-options="{'widget': 'date'}"/> - <span t-field="o.period_to" t-options="{'widget': 'date'}"/>
+                                                </div> -->
+                                            </td>
+                                            <td class="text-right">1.0</td>
+                                            <td class="text-right">
+                                                <span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                                            </td>
+                                            <td class="text-right" style="font-weight: bold;">
+                                                <span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Totals Section -->
+                        <div class="row mb-3">
+                            <div class="col-7">
+                                <!-- Payment History -->
+                                <div t-if="o.matched_payment_ids" class="mt-2">
+                                    <h5><i class="fa fa-credit-card"/> Payment History</h5>
+                                    <table class="table table-sm table-bordered">
+                                        <thead style="background-color: #27ae60; color: white;">
+                                            <tr>
+                                                <th style="padding: 8px;">Date</th>
+                                                <th style="padding: 8px;">Amount</th>
+                                                <th style="padding: 8px;">Method</th>
+                                                <th style="padding: 8px;">Reference</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                            <t t-foreach="o.matched_payment_ids" t-as="payment">
+                                                <tr>
+                                                    <td style="padding: 6px;"><span t-field="payment.date" t-options="{'widget': 'date'}"/></td>
+                                                    <td class="paid-amount" style="padding: 6px;">
+                                                        <span t-field="payment.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                    </td>
+                                                    <td style="padding: 6px;"><span t-field="payment.payment_method_line_id.name"/></td>
+                                                    <td style="padding: 6px;"><span t-field="payment.reference"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="total-section">
+                                    <table class="table table-sm" style="margin-bottom: 0;">
+                                        <tr style="border-bottom: 2px solid #34495e;" t-if="o.amount_tax > 0">
+                                            <td style="font-size: 1rem; font-weight: bold; padding: 8px;">
+                                                <i class="fa fa-calculator"/> Subtotal:
+                                            </td>
+                                            <td class="text-right" style="font-size: 1rem; font-weight: bold; padding: 8px;">
+                                                <span t-field="o.amount_untaxed" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: 2px solid #34495e;" t-if="o.amount_tax > 0">
+                                            <td style="font-size: 1rem; font-weight: bold; padding: 8px;">
+                                                <i class="fa fa-calculator"/> VAT:
+                                            </td>
+                                            <td class="text-right" style="font-size: 1rem; font-weight: bold; padding: 8px;">
+                                                <span t-field="o.amount_tax" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: 2px solid #34495e;">
+                                            <td style="font-size: 1rem; font-weight: bold; padding: 8px;">
+                                                <i class="fa fa-calculator"/> Total:
+                                            </td>
+                                            <td class="text-right" style="font-size: 1rem; font-weight: bold; padding: 8px;">
+                                                <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold; color: #27ae60; padding: 8px;">
+                                                <i class="fa fa-check-circle"/> Total Paid:
+                                            </td>
+                                            <td class="text-right paid-amount" style="padding: 8px;">
+                                                <span t-esc="o.amount_total - o.amount_residual" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-top: 3px solid #e74c3c;">
+                                            <td class="amount-due" style="font-size: 1.1rem; padding: 8px;">
+                                                <i class="fa fa-exclamation-circle"/> Amount Due:
+                                            </td>
+                                            <td class="text-right amount-due" style="font-size: 1.1rem; padding: 8px;">
+                                                <span t-field="o.amount_residual" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <!-- Status Badge -->
+                                <div class="text-center mt-2">
+                                    <span t-if="o.state == 'draft'" class="badge badge-secondary badge-pill" style="font-size: 0.8rem; padding: 6px 12px;">
+                                        <i class="fa fa-edit"/> DRAFT
+                                    </span>
+                                    <span t-elif="o.state == 'open'" class="badge badge-warning badge-pill" style="font-size: 0.8rem; padding: 6px 12px;">
+                                        <i class="fa fa-clock-o"/> PENDING PAYMENT
+                                    </span>
+                                    <span t-elif="o.state == 'paid'" class="badge badge-success badge-pill" style="font-size: 0.8rem; padding: 6px 12px;">
+                                        <i class="fa fa-check"/> PAID IN FULL
+                                    </span>
+                                    <span t-elif="o.state == 'overdue'" class="badge badge-danger badge-pill" style="font-size: 0.8rem; padding: 6px 12px;">
+                                        <i class="fa fa-exclamation-triangle"/> OVERDUE
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Notes -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="border-top pt-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h6><i class="fa fa-info-circle"/> Payment Information</h6>
+                                            <div class="small text-muted" style="line-height: 1.3;">
+                                                <p class="mb-1"><strong>Due Date:</strong> <span t-field="o.invoice_date_due" t-options="{'widget': 'date'}"/></p>
+                                                <p class="mb-1"><strong>Late Payment:</strong> Late fees may apply after due date.</p>
+                                                <p class="mb-0"><strong>Payment Methods:</strong> Cash, Bank Transfer, Check</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <h6><i class="fa fa-file-text"/> Terms &amp; Conditions</h6>
+                                            <div class="small text-muted" style="line-height: 1.3;">
+                                                <ul style="padding-left: 15px; margin: 0;">
+                                                    <li>Payment is due by the specified due date</li>
+                                                    <li>Late payments may incur additional fees</li>
+                                                    <li>Please retain this invoice for your records</li>
+                                                    <li>Contact us immediately for any billing questions</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <div style="border-top: 2px solid #3498db; padding-top: 10px;">
+                                    <p class="text-muted small mb-1">
+                                        <strong>Thank you for choosing our services!</strong>
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        For questions about this invoice, contact us at 
+                                        <span t-field="o.company_id.phone"/> or 
+                                        <span t-field="o.company_id.email"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Receipt Report for Payments -->
+    <record id="action_report_property_receipt" model="ir.actions.report">
+        <field name="name">Payment Receipt</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">property_management_lite.report_property_receipt</field>
+        <field name="report_file">property_management_lite.report_property_receipt</field>
+        <field name="print_report_name">('Payment Receipt - ' + object.name)</field>
+        <field name="binding_model_id" ref="model_account_payment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Receipt Template -->
+    <template id="report_property_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <t t-if="o.reconciled_invoice_ids or o.invoice_ids" t-set="invoice" t-value="(o.reconciled_invoice_ids or o.invoice_ids)[0]"/>
+                        <!-- Custom Styles for Receipt -->
+                        <style>
+                            .receipt-header {  padding: 25px; border-radius: 10px; margin-bottom: 30px; }
+                            .receipt-title { font-size: 2.5rem; font-weight: bold; }
+                            .receipt-number { font-size: 1.3rem; opacity: 0.9; }
+                            .receipt-info { background-color: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 5px solid #27ae60; }
+                            .amount-box { background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 20px; border-radius: 10px; text-align: center; }
+                            .amount-received { font-size: 2rem; font-weight: bold; }
+                            .signature-box { border: 2px dashed #bdc3c7; padding: 30px; margin-top: 20px; text-align: center; background-color: #f8f9fa; }
+                        </style>
+
+                        <!-- Receipt Header -->
+                        <div class="receipt-header text-center">
+                            <h1 class="receipt-title mb-2">
+                                <i class="fa fa-receipt"/>
+                                PAYMENT RECEIPT
+                            </h1>
+                            <p class="receipt-number mb-0">Receipt No: <span t-field="o.name"/></p>
+                        </div>
+
+                        <!-- Receipt Info -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <div class="receipt-info">
+                                    <h4 class="mb-3"><i class="fa fa-user"/> Received From:</h4>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <p class="mb-1"><strong>Name:</strong> <span t-field="o.tenant_id.name"/></p>
+                                            <p class="mb-1" t-if="o.tenant_id.phone"><strong>Phone:</strong> <span t-field="o.tenant_id.phone"/></p>
+                                            <p class="mb-1" t-if="o.tenant_id.email"><strong>Email:</strong> <span t-field="o.tenant_id.email"/></p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="mb-1" t-if="o.tenant_id.id_passport"><strong>ID:</strong> <span t-field="o.tenant_id.id_passport"/></p>
+                                            <p class="mb-1"><strong>Property:</strong> <span t-if="invoice" t-field="invoice.property_id.name"/></p>
+                                            <p class="mb-1"><strong>Room:</strong> <span t-if="invoice" t-field="invoice.room_id.name"/></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="amount-box">
+                                    <h5 class="mb-2"><i class="fa fa-money"/> Amount Received</h5>
+                                    <div class="amount-received">
+                                        <span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Details -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td class="font-weight-bold" style="background-color: #ecf0f1; width: 25%;"><i class="fa fa-calendar"/> Payment Date:</td>
+                                            <td><span t-field="o.date" t-options="{'widget': 'date'}"/></td>
+                                            <td class="font-weight-bold" style="background-color: #ecf0f1; width: 25%;"><i class="fa fa-credit-card"/> Payment Method:</td>
+                                            <td><span t-field="o.payment_method_line_id.name"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold" style="background-color: #ecf0f1;"><i class="fa fa-hashtag"/> Reference:</td>
+                                            <td><span t-field="o.reference"/></td>
+                                            <td class="font-weight-bold" style="background-color: #ecf0f1;"><i class="fa fa-file-text"/> For Invoice:</td>
+                                            <td><span t-if="invoice" t-field="invoice.name" /></td>
+                                        </tr>
+                                        <tr t-if="o.notes">
+                                            <td class="font-weight-bold" style="background-color: #ecf0f1;"><i class="fa fa-sticky-note"/> Notes:</td>
+                                            <td colspan="3"><span t-field="o.notes"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Summary -->
+                        <div class="row mb-4" t-if="invoice">
+                            <div class="col-12">
+                                <h4><i class="fa fa-list"/> Invoice Summary</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead style="background-color: #34495e; color: white;">
+                                        <tr>
+                                            <th>Invoice Total</th>
+                                            <th>Previous Payments</th>
+                                            <th>This Payment</th>
+                                            <th>Remaining Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center">
+                                                <span t-if="invoice" t-field="invoice.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-if="invoice" t-esc="invoice.amount_paid - o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                            <td class="text-center font-weight-bold" style="background-color: #d5f4e6;">
+                                                <span t-if="invoice" t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-if="invoice" t-field="invoice.amount_residual" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Signature Section -->
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <div class="signature-box">
+                                    <p class="mb-4"><strong>Received By (Signature)</strong></p>
+                                    <div style="height: 50px; border-bottom: 1px solid #000; margin-bottom: 10px;"></div>
+                                    <p class="small text-muted mb-0">Authorized Representative</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="signature-box">
+                                    <p class="mb-4"><strong>Tenant Acknowledgment</strong></p>
+                                    <div style="height: 50px; border-bottom: 1px solid #000; margin-bottom: 10px;"></div>
+                                    <p class="small text-muted mb-0">Tenant Signature</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <div style="border-top: 2px solid #27ae60; padding-top: 15px;">
+                                    <p class="text-muted small mb-1">
+                                        <strong>Thank you for your payment!</strong>
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        This is a computer-generated receipt and is valid without signature.
+                                        For queries, contact us at <span t-field="o.company_id.phone"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
