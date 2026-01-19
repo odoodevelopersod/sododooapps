@@ -110,6 +110,7 @@ Optimized for Dubai real estate market with AED currency support.
         'views/menu_views.xml',
     ],
     'installable': True,
+    'images': ['static/description/banner.png'],
     'auto_install': False,
     'application': True,
     'sequence': 10,
