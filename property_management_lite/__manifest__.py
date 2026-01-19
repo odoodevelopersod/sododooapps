@@ -44,6 +44,8 @@ Optimized for Dubai real estate market with AED currency support.
     'author': 'SOD Infotech',
     'website': 'https://sodinfotech.com/',
     'license': 'OPL-1',
+    'price': 110.00,
+    'category': 'Real Estate',
     'depends': [
         'base',
         'contacts',
