@@ -42,10 +42,10 @@ A comprehensive property and room rental management system featuring:
 Optimized for Dubai real estate market with AED currency support.
     """,
     'author': 'SOD Infotech',
+    'category': 'Real Estate',
     'website': 'https://sodinfotech.com/',
     'license': 'OPL-1',
-    'price': 110.00,
-    'category': 'Real Estate',
+    'price': 200.00,
     'depends': [
         'base',
         'contacts',
@@ -58,7 +58,7 @@ Optimized for Dubai real estate market with AED currency support.
         # Security
         'security/property_security.xml',
         'security/ir.model.access.csv',
-        
+
         # Data
         'data/property_data.xml',
         'data/sequences.xml',
@@ -75,7 +75,7 @@ Optimized for Dubai real estate market with AED currency support.
 
         # Views - Dashboard
         'views/dashboard_views.xml',
-        
+
         # Views
         # 'views/menu_views.xml',
         'views/property_views.xml',
@@ -95,14 +95,13 @@ Optimized for Dubai real estate market with AED currency support.
         # Wizards
         'wizards/property_data_import_wizard_views.xml',
         'views/statement_wizard_views.xml',  # Fixed path
-        
+
         # Report templates
         'reports/invoice_reports.xml',
-        
+
         # Email Templates (must come before views that reference them)
         'data/email_templates.xml',
         'views/invoice_views.xml',
-
 
         # Invoice views (references email templates)
         'views/invoice_views.xml',
@@ -110,7 +109,7 @@ Optimized for Dubai real estate market with AED currency support.
         'views/menu_views.xml',
     ],
     'installable': True,
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/banner.jpg'],
     'auto_install': False,
     'application': True,
     'sequence': 10,
